@@ -22,8 +22,13 @@
   min-width: 0;
 }
 
+/* The one active section, labelled by its own heading (the current section name). */
 .panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
   min-width: 0;
+  scroll-margin-block-start: var(--space-4);
 }
 
 .panel:focus {
@@ -36,14 +41,16 @@
   border-radius: var(--radius-md);
 }
 
-/* The tab list scrolls inside its own box on phones; the page never does. */
-.tabsBar {
+.panelTitle {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--color-ink);
+}
+
+.panelBody {
   min-width: 0;
-  max-width: 100%;
-  overflow-x: auto;
-  overscroll-behavior-inline: contain;
-  scrollbar-width: thin;
-  scroll-margin-block-start: var(--space-4);
 }
 
 .groupTitle {

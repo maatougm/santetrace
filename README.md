@@ -83,6 +83,7 @@ La répétition IoT utilise une base en mémoire et des octets synthétiques. El
 
 ## Documentation et périmètre
 
+- [Vérification de la livraison du 11 octobre 2026](docs/full-qa-release.md) : 952 tests automatisés réussis, compilation et typage vérifiés, corrections des parcours et interface française/arabe testées dans le navigateur ; périmètre et limites précisés.
 - [Fiche technique en français](docs/santetrace-fiche-technique.md), également disponible en [PDF](docs/santetrace-fiche-technique.pdf) et [DOCX](docs/santetrace-fiche-technique.docx).
 - [Dossier de conception du suivi continu](specs/006-continuous-patient-monitoring/spec.md) et [contrat API de conception](specs/006-continuous-patient-monitoring/contracts/api.md). Ces documents datés conservent des étapes préalables à l’implémentation ; suivre les commandes du présent README pour exécuter la version soumise.
 - [Politique des références du prototype](research/monitoring-prototype-policy.md), identifiée par empreinte dans le manifeste de recherche.

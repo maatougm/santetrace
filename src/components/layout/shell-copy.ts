@@ -1,4 +1,5 @@
 import type { Language } from "@/lib/client/api";
+import type { ShellNavItem } from "./nav";
 
 export interface ShellCopy {
   skipToContent: string;
@@ -69,3 +70,58 @@ export const SHELL_COPY: Record<Language, ShellCopy> = {
     demoRules: "حدود تجريبية، غير مُعتمدة سريريًا.",
   },
 };
+
+/** Clinician-shell-only strings (the shared keys above stay in SHELL_COPY). "Santetrace" is never translated. */
+export interface ClinicianShellCopy {
+  /** Accessible name of the brand link back to the queue. */
+  brandHome: string;
+  navPatients: string;
+  navInvitations: string;
+  /** Name of the other language, written in that language. */
+  languageSwitchLabel: string;
+  languageSwitchAria: string;
+  logoutStoppedTitle: string;
+  logoutStoppedPurgeFailed: string;
+  logoutStoppedPreparationFailed: string;
+  logoutRetry: string;
+}
+
+export const CLINICIAN_SHELL_COPY: Readonly<Record<Language, ClinicianShellCopy>> = {
+  fr: {
+    brandHome: "Santetrace — liste des patients",
+    navPatients: "Patients",
+    navInvitations: "Invitations",
+    languageSwitchLabel: "العربية",
+    languageSwitchAria: "Afficher l’espace clinicien en arabe",
+    logoutStoppedTitle: "Déconnexion interrompue",
+    logoutStoppedPurgeFailed:
+      "Des données privées laissées sur cet appareil n’ont pas pu être effacées. Vous restez connecté·e. Fermez les autres onglets Santetrace, puis réessayez.",
+    logoutStoppedPreparationFailed: "La déconnexion n’a pas pu être préparée. Vous restez connecté·e et rien n’a été effacé.",
+    logoutRetry: "Réessayer la déconnexion",
+  },
+  ar: {
+    brandHome: "Santetrace — قائمة المرضى",
+    navPatients: "المرضى",
+    navInvitations: "الدعوات",
+    languageSwitchLabel: "Français",
+    languageSwitchAria: "عرض مساحة الطبيب بالفرنسية",
+    logoutStoppedTitle: "توقّف تسجيل الخروج",
+    logoutStoppedPurgeFailed:
+      "تعذّر حذف بيانات خاصة متبقية على هذا الجهاز. ما زلت متصلًا. أغلق علامات تبويب Santetrace الأخرى ثم أعد المحاولة.",
+    logoutStoppedPreparationFailed: "تعذّر تحضير تسجيل الخروج. ما زلت متصلًا ولم يُحذف أي شيء.",
+    logoutRetry: "إعادة محاولة تسجيل الخروج",
+  },
+};
+
+/**
+ * Clinician header links in the selected language. Only the labels change:
+ * hrefs, icons and active-route matching are identical in every language.
+ */
+export function clinicianNav(lang: Language): ShellNavItem[] {
+  const copy = CLINICIAN_SHELL_COPY[lang];
+  return [
+    // Exact on the queue, plus every patient record page.
+    { href: "/doctor", label: copy.navPatients, icon: "users", exact: true, matches: ["/doctor/patients"] },
+    { href: "/doctor/invitations", label: copy.navInvitations, icon: "inbox" },
+  ];
+}

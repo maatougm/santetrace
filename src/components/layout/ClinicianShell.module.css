@@ -65,6 +65,7 @@
 }
 
 .navLink:focus-visible,
+.langToggle:focus-visible,
 .logout:focus-visible {
   outline: none;
   background: var(--color-focus-halo);
@@ -164,6 +165,36 @@
   color: var(--color-rail-ink-2);
 }
 
+/* Same 44px control as the patient header, drawn for the blue band. */
+.langToggle {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  min-width: var(--touch-min);
+  height: var(--touch-min);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-rail-line);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-rail-ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.langToggle :lang(ar) {
+  font-family: var(--font-arabic);
+  font-size: var(--text-base);
+}
+
+.langToggle:hover {
+  background: var(--color-rail-hover);
+}
+
 .logout {
   flex: none;
   display: grid;
@@ -252,6 +283,10 @@
     flex: 1;
     justify-content: center;
     min-height: 48px;
+  }
+
+  .actor {
+    gap: var(--space-2);
   }
 
   .actorText,

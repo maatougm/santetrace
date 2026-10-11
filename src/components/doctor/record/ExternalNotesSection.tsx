@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge, Card, EmptyState, Timestamp } from "@/components/ui";
+import { UNKNOWN_LANGUAGE_TEXT } from "@/components/layout/source-language";
 import type { ExternalNote } from "@/contracts/external-visit";
 import { SHARE_COPY } from "@/lib/client/copy/share";
 import styles from "./Record.module.css";
@@ -29,7 +30,10 @@ export function ExternalNotesSection({ notes }: { notes: readonly ExternalNote[]
               </Badge>
               {note.correctsNoteId ? <Badge tone="muted">{copy.noteCorrects}</Badge> : null}
             </p>
-            <p className={styles.externalNoteText}>{note.text}</p>
+            {/* Authored by an external practitioner, language not recorded: unknown lang + automatic direction. */}
+            <p className={styles.externalNoteText} {...UNKNOWN_LANGUAGE_TEXT}>
+              {note.text}
+            </p>
             <p className={styles.externalNoteMeta}>
               <Timestamp iso={note.receivedAt} label="Reçue le" />
               {note.consultationDate ? <span>{copy.consultationDate(note.consultationDate.slice(0, 10))}</span> : null}

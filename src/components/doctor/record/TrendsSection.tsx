@@ -5,6 +5,7 @@ import type { PatientRecord } from "@/lib/client/api";
 import { BloodPressureChart } from "../charts/BloodPressureChart";
 import { GlucoseCharts } from "../charts/GlucoseCharts";
 import { LabCharts, labSeries } from "../charts/LabCharts";
+import { readability, recordCounts } from "./read-visibility";
 import styles from "./Record.module.css";
 
 interface TrendsSectionProps {
@@ -12,13 +13,21 @@ interface TrendsSectionProps {
   onOpenDocuments: () => void;
 }
 
-/** Trusted trajectory: received measurements and clinician-confirmed lab results only. */
+const LABS_NOT_SHARED = "Résultats biologiques non partagés";
+
+/**
+ * Trusted trajectory: received measurements and clinician-confirmed lab results only.
+ * Lab results need owner or clinical + documents: when they are not shared, an empty
+ * projection is shown as "non partagés", never as "aucun résultat confirmé".
+ */
 export function TrendsSection({ record, onOpenDocuments }: TrendsSectionProps) {
   const { patient, measurements, observations, candidates, documents } = record;
+  const { labs: labsShared } = readability(record.access);
   const hasBp = measurements.some((m) => m.kind === "blood_pressure");
   const hasGlucose = measurements.some((m) => m.kind === "glucose");
-  const series = labSeries(patient.id, observations, candidates, documents);
-  const pending = candidates.filter((c) => c.status === "proposed").length;
+  const series = labsShared ? labSeries(patient.id, observations, candidates, documents) : [];
+  const pending = recordCounts(record).pendingLabs;
+  const pendingNotice = pending !== null && pending > 0 ? <PendingNotice count={pending} onOpen={onOpenDocuments} /> : null;
 
   if (measurements.length === 0 && series.length === 0) {
     return (
@@ -26,9 +35,13 @@ export function TrendsSection({ record, onOpenDocuments }: TrendsSectionProps) {
         <EmptyState
           icon="help-circle"
           title="Aucune mesure : statut inconnu"
-          description="Aucune mesure reçue et aucun résultat biologique confirmé. L’absence de données n’indique pas un état stable."
+          description={
+            labsShared
+              ? "Aucune mesure reçue et aucun résultat biologique confirmé. L’absence de données n’indique pas un état stable."
+              : `Aucune mesure reçue. ${LABS_NOT_SHARED} avec ce compte. L’absence de données n’indique pas un état stable.`
+          }
         />
-        {pending > 0 ? <PendingNotice count={pending} onOpen={onOpenDocuments} /> : null}
+        {pendingNotice}
       </div>
     );
   }
@@ -50,8 +63,15 @@ export function TrendsSection({ record, onOpenDocuments }: TrendsSectionProps) {
       </div>
 
       <h2 className={styles.groupTitle}>Résultats biologiques confirmés (EndoRecord)</h2>
-      {pending > 0 ? <PendingNotice count={pending} onOpen={onOpenDocuments} /> : null}
-      {series.length > 0 ? (
+      {pendingNotice}
+      {!labsShared ? (
+        <EmptyState
+          compact
+          icon="lock"
+          title={LABS_NOT_SHARED}
+          description="Les résultats confirmés et les valeurs en attente de revue ne sont pas partagés avec ce compte."
+        />
+      ) : series.length > 0 ? (
         <div className={styles.chartGrid}>
           <LabCharts series={series} />
         </div>

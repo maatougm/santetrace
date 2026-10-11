@@ -2,34 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, type ReactNode } from "react";
-import { Button, ConnectionBadge, DemoLabel, Icon, Notice } from "@/components/ui";
+import { useEffect, useMemo, type ReactNode } from "react";
+import { Button, ConnectionBadge, DEMO_LABEL_AR, DEMO_LABEL_FR, DemoLabel, Icon, Notice } from "@/components/ui";
+import type { Language } from "@/lib/client/api";
+import { directionFor } from "@/lib/client/document-language";
 import { DEVICE_PURGE_FAILED } from "@/lib/client/session-cleanup";
 import { useLiveConnection } from "@/lib/client/use-live";
 import { BrandMark } from "./BrandMark";
+import { ClinicianLanguageProvider, useClinicianLanguage } from "./ClinicianLanguage";
 import { RequireSession } from "./RequireSession";
 import { useActorSession } from "./SessionContext";
-import { SHELL_COPY } from "./shell-copy";
+import { CLINICIAN_SHELL_COPY, SHELL_COPY, clinicianNav } from "./shell-copy";
 import { isNavActive, type ShellNavItem } from "./nav";
 import { useLogout } from "./useLogout";
 import styles from "./ClinicianShell.module.css";
 
-const copy = SHELL_COPY.fr;
-
-/** The logout stopped before signing out: the clinician is still signed in. */
-const LOGOUT_STOPPED_COPY = {
-  title: "Déconnexion interrompue",
-  purgeFailed:
-    "Des données privées laissées sur cet appareil n’ont pas pu être effacées. Vous restez connecté·e. Fermez les autres onglets Santetrace, puis réessayez.",
-  preparationFailed: "La déconnexion n’a pas pu être préparée. Vous restez connecté·e et rien n’a été effacé.",
-  retry: "Réessayer la déconnexion",
-};
-
-export const CLINICIAN_NAV: ShellNavItem[] = [
-  // Exact on the queue, plus every patient record page.
-  { href: "/doctor", label: "Patients", icon: "users", exact: true, matches: ["/doctor/patients"] },
-  { href: "/doctor/invitations", label: "Invitations", icon: "inbox" },
-];
+/** Default (French) header links, kept for existing imports; the shell renders `clinicianNav(lang)`. */
+export const CLINICIAN_NAV: ShellNavItem[] = clinicianNav("fr");
 
 function initials(name: string): string {
   const parts = name
@@ -42,14 +31,15 @@ function initials(name: string): string {
 
 interface HeaderProps {
   nav: ShellNavItem[];
+  lang: Language;
   logout: () => Promise<void>;
   pending: boolean;
 }
 
-function ClinicianNav({ nav }: { nav: ShellNavItem[] }) {
+function ClinicianNav({ nav, label }: { nav: ShellNavItem[]; label: string }) {
   const pathname = usePathname() ?? "";
   return (
-    <nav className={styles.nav} aria-label={copy.mainNav}>
+    <nav className={styles.nav} aria-label={label}>
       <ul className={styles.navList}>
         {nav.map((item) => {
           const active = isNavActive(pathname, item);
@@ -71,24 +61,40 @@ function ClinicianNav({ nav }: { nav: ShellNavItem[] }) {
   );
 }
 
-function ClinicianHeader({ nav, logout, pending }: HeaderProps) {
+/** Same control as the patient header: 44px, shows the other language's name in that language. */
+function LanguageToggle() {
+  const { lang, setLanguage } = useClinicianLanguage();
+  const copy = CLINICIAN_SHELL_COPY[lang];
+  const next: Language = lang === "fr" ? "ar" : "fr";
+  return (
+    <button type="button" className={styles.langToggle} onClick={() => setLanguage(next)} aria-label={copy.languageSwitchAria}>
+      <span lang={next} dir={directionFor(next)}>
+        {copy.languageSwitchLabel}
+      </span>
+    </button>
+  );
+}
+
+function ClinicianHeader({ nav, lang, logout, pending }: HeaderProps) {
   const { actor } = useActorSession();
+  const copy = SHELL_COPY[lang];
 
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>
-        <Link href="/doctor" className={styles.brandLink} aria-label="Santetrace — liste des patients">
+        <Link href="/doctor" className={styles.brandLink} aria-label={CLINICIAN_SHELL_COPY[lang].brandHome}>
           <BrandMark tone="dark" />
         </Link>
-        <ClinicianNav nav={nav} />
+        <ClinicianNav nav={nav} label={copy.mainNav} />
         <div className={styles.actor}>
           <span className={styles.avatar} aria-hidden="true">
             {initials(actor.displayName)}
           </span>
           <span className={styles.actorText}>
-            <span className={styles.actorName}>{actor.displayName}</span>
+            <bdi className={styles.actorName}>{actor.displayName}</bdi>
             <span className={styles.actorRole}>{copy.clinicianRole}</span>
           </span>
+          <LanguageToggle />
           <button
             type="button"
             className={styles.logout}
@@ -107,11 +113,15 @@ function ClinicianHeader({ nav, logout, pending }: HeaderProps) {
 
 interface ClinicianShellProps {
   children: ReactNode;
-  /** Overrides the default header links. */
+  /** Overrides the default (localized) header links. */
   nav?: ShellNavItem[];
 }
 
-function ClinicianFrame({ children, nav }: { children: ReactNode; nav: ShellNavItem[] }) {
+function ClinicianFrame({ children, nav }: ClinicianShellProps) {
+  const { lang } = useClinicianLanguage();
+  const copy = SHELL_COPY[lang];
+  const clinicianCopy = CLINICIAN_SHELL_COPY[lang];
+  const items = useMemo(() => nav ?? clinicianNav(lang), [nav, lang]);
   const { logout, pending, error } = useLogout();
   // Shares the tab's single live socket with the data hooks; polling stays the fallback.
   const live = useLiveConnection();
@@ -124,16 +134,16 @@ function ClinicianFrame({ children, nav }: { children: ReactNode; nav: ShellNavI
   }, [logoutStopped]);
 
   return (
-    <div className={styles.shell}>
+    <div className={styles.shell} lang={lang} dir={directionFor(lang)}>
       <a className={styles.skip} href="#main-content">
         {copy.skipToContent}
       </a>
-      <ClinicianHeader nav={nav} logout={logout} pending={pending} />
+      <ClinicianHeader nav={items} lang={lang} logout={logout} pending={pending} />
       <div className={styles.demoStrip}>
         <div className={styles.demoInner}>
-          <DemoLabel />
+          <DemoLabel>{lang === "ar" ? DEMO_LABEL_AR : DEMO_LABEL_FR}</DemoLabel>
           <p className={styles.demoNote}>{copy.demoRules}</p>
-          <ConnectionBadge className={styles.live} status={live.status} lastEventAt={live.lastEventAt} />
+          <ConnectionBadge className={styles.live} status={live.status} lastEventAt={live.lastEventAt} lang={lang} />
         </div>
       </div>
       <main id="main-content" className={styles.main} tabIndex={-1}>
@@ -143,14 +153,14 @@ function ClinicianFrame({ children, nav }: { children: ReactNode; nav: ShellNavI
               tone="neutral"
               icon="alert-triangle"
               role="alert"
-              title={LOGOUT_STOPPED_COPY.title}
+              title={clinicianCopy.logoutStoppedTitle}
               action={
                 <Button variant="secondary" size="sm" iconStart="refresh" onClick={() => void logout()}>
-                  {LOGOUT_STOPPED_COPY.retry}
+                  {clinicianCopy.logoutRetry}
                 </Button>
               }
             >
-              {error === DEVICE_PURGE_FAILED ? LOGOUT_STOPPED_COPY.purgeFailed : LOGOUT_STOPPED_COPY.preparationFailed}
+              {error === DEVICE_PURGE_FAILED ? clinicianCopy.logoutStoppedPurgeFailed : clinicianCopy.logoutStoppedPreparationFailed}
             </Notice>
           </div>
         )}
@@ -160,11 +170,24 @@ function ClinicianFrame({ children, nav }: { children: ReactNode; nav: ShellNavI
   );
 }
 
-/** Responsive clinician frame: blue header band (nav wraps to its own row on phones), role gate, logout. */
-export function ClinicianShell({ children, nav = CLINICIAN_NAV }: ClinicianShellProps) {
+/** The session gate needs the provider above it so its screens follow the selected language. */
+function ClinicianGate({ children, nav }: ClinicianShellProps) {
+  const { lang } = useClinicianLanguage();
   return (
-    <RequireSession role="clinician" lang="fr">
+    <RequireSession role="clinician" lang={lang}>
       <ClinicianFrame nav={nav}>{children}</ClinicianFrame>
     </RequireSession>
+  );
+}
+
+/**
+ * Responsive clinician frame: blue header band (nav wraps to its own row on
+ * phones), FR/AR language toggle on the device preference, role gate, logout.
+ */
+export function ClinicianShell({ children, nav }: ClinicianShellProps) {
+  return (
+    <ClinicianLanguageProvider>
+      <ClinicianGate nav={nav}>{children}</ClinicianGate>
+    </ClinicianLanguageProvider>
   );
 }

@@ -86,10 +86,6 @@
   color: var(--color-ink);
 }
 
-.sectionGap {
-  margin-block-end: var(--space-3);
-}
-
 .statusText {
   margin: 0;
   font-size: var(--text-base);
@@ -144,9 +140,10 @@ a.attentionRow:hover {
   min-width: 0;
 }
 
+/* What the row link does: an action label, so 16px like the row itself. */
 .attentionAction {
   display: block;
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   font-weight: var(--weight-regular);
 }
 
@@ -186,7 +183,8 @@ a.attentionRow:hover {
 
 .textLink:focus-visible,
 a.attentionRow:focus-visible,
-.tile:focus-visible,
+.linkRow:focus-visible,
+.quietLink:focus-visible,
 .summary:focus-visible {
   outline: var(--focus-width) solid var(--color-focus);
   outline-offset: var(--focus-offset);
@@ -224,46 +222,94 @@ a.attentionRow:focus-visible,
   color: var(--color-ink-3);
 }
 
-/* ---------- Quick links (2 x 2) ---------- */
+/* ---------- Latest reading (open, right after the primary action) ---------- */
 
-.tiles {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3);
-}
-
-.tile {
+.latest {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--space-2);
-  min-height: 4rem;
-  height: 100%;
-  padding: var(--space-3);
+  padding: var(--space-4);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-md);
   background: var(--color-surface);
-  color: var(--color-accent);
+}
+
+/* ---------- Quick links: compact secondary list with row dividers ---------- */
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.linksTitle {
+  margin: 0;
   font-size: var(--text-base);
   font-weight: var(--weight-semibold);
   line-height: var(--leading-snug);
-  text-decoration: none;
+  color: var(--color-ink-2);
+}
+
+.linkList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-block-start: 1px solid var(--color-line);
+}
+
+.linkList > li {
+  border-block-end: 1px solid var(--color-line);
+}
+
+.linkRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-min);
+  padding-block: var(--space-2);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.linkRow:hover {
+  color: var(--color-accent-strong);
+  text-decoration-thickness: 2px;
+}
+
+.linkRow > span {
+  flex: 1;
+  min-width: 0;
   overflow-wrap: anywhere;
 }
 
-.tile:hover {
-  border-color: var(--color-accent);
-  text-decoration: underline;
-}
-
-.tileIcon {
+.linkIcon {
   flex: none;
+  color: var(--color-ink-3);
 }
 
-.tile > span {
-  min-width: 0;
+/* Devices and simulator: reachable, deliberately quieter than the list above. */
+.quietLink {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--space-1);
+  min-height: var(--touch-min);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  overflow-wrap: anywhere;
+}
+
+.quietLink:hover {
+  color: var(--color-accent-strong);
+  text-decoration-thickness: 2px;
 }
 
 /* ---------- Disclosures ---------- */
@@ -325,7 +371,7 @@ a.attentionRow:focus-visible,
   font-weight: var(--weight-medium);
 }
 
-/* Collapsed latest reading: number plus its provenance labels, wrapping on narrow phones. */
+/* A reading's number plus its provenance labels (open or in a summary), wrapping on narrow phones. */
 .summaryReading {
   display: inline-flex;
   flex-wrap: wrap;
@@ -350,7 +396,7 @@ a.attentionRow:focus-visible,
   border-block-start: 1px solid var(--color-line-subtle);
 }
 
-/* ---------- Latest reading (inside a disclosure) ---------- */
+/* ---------- Reading rows (latest reading, last result) ---------- */
 
 .latestTop {
   display: flex;
@@ -358,20 +404,4 @@ a.attentionRow:focus-visible,
   justify-content: space-between;
   gap: var(--space-2);
   flex-wrap: wrap;
-}
-
-.readingBadges {
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-1-5);
-}
-
-/* Unscored pulse kept beside the scored reading, separated by a hairline. */
-.pulseRow {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1-5);
-  padding-block-start: var(--space-3);
-  border-block-start: 1px solid var(--color-line-subtle);
 }

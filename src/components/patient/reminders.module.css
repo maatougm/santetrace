@@ -65,9 +65,10 @@
   border-top: 1px solid var(--color-line-subtle);
 }
 
+/* Labels the report controls below it: 16px like other field labels on a phone. */
 .reportLabel {
   margin: 0;
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   font-weight: var(--weight-bold);
   color: var(--color-ink-3);
 }

@@ -2,7 +2,9 @@
 
 import { useId, useState, type FormEvent, type ReactNode } from "react";
 import { Button, Dialog, Field, Notice, TextArea, describedBy } from "@/components/ui";
+import { UNKNOWN_LANGUAGE_TEXT } from "@/components/layout/source-language";
 import { REVIEW_REASON_MAX } from "./message-state";
+import { messageReviewFocusFallback } from "./MessageItem";
 import styles from "./Comms.module.css";
 
 interface ReasonDialogProps {
@@ -51,6 +53,8 @@ export function ReasonDialog({ open, title, description, confirmLabel, submittin
       onClose={close}
       title={title}
       closeOnBackdrop={false}
+      // Only an opener inside a marked message gets a stand-in; other reason dialogs keep plain opener return.
+      returnFocusFallback={messageReviewFocusFallback}
       footer={
         <>
           <Button variant="ghost" onClick={close} disabled={submitting}>
@@ -66,6 +70,7 @@ export function ReasonDialog({ open, title, description, confirmLabel, submittin
         <div className={styles.mutedBlock}>{description}</div>
         <Field label="Motif" htmlFor={reasonId} hint={hint} error={error} required>
           <TextArea
+            {...UNKNOWN_LANGUAGE_TEXT}
             id={reasonId}
             value={reason}
             rows={3}

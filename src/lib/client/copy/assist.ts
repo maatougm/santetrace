@@ -66,7 +66,11 @@ const fr = {
   } satisfies Record<ReusableProtocol["state"], string>,
   reminders: {
     planLink: "Voir mon plan",
-    readIsNotDone: "Lire un rappel ne le marque pas comme fait : déclarez-le explicitement.",
+    // Branch-qualified: only a medication reminder is declared on this screen.
+    readIsNotDone:
+      "Lire un rappel ne le marque pas comme fait. Pour un médicament, déclarez la prise ici ; pour une action du plan, suivez votre plan.",
+    /** Report-area label of a care-action reminder (medication keeps "Votre déclaration"). */
+    planActionLabel: "Action du plan",
   },
 };
 
@@ -129,7 +133,8 @@ const ar: AssistCopy = {
   },
   reminders: {
     planLink: "عرض خطتي",
-    readIsNotDone: "قراءة التذكير لا تعني إنجازه: صرّح بذلك صراحة.",
+    readIsNotDone: "قراءة التذكير لا تعني إنجازه. بالنسبة لدواء، صرّح هنا بتناوله؛ وبالنسبة لإجراء من الخطة، اتّبع خطتك.",
+    planActionLabel: "إجراء من الخطة",
   },
 };
 

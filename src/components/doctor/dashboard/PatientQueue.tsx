@@ -2,7 +2,8 @@
 
 import { useId, useMemo, useState } from "react";
 import { Button, EmptyState } from "@/components/ui";
-import type { Alert } from "@/lib/client/api";
+import type { Alert, Language } from "@/lib/client/api";
+import { DASHBOARD_COPY, resultText } from "./dashboard-copy";
 import { PatientTable } from "./PatientTable";
 import { QueueToolbar } from "./QueueToolbar";
 import type { QueueRow, WorkerHealth } from "./queue";
@@ -17,16 +18,13 @@ interface PatientQueueProps {
   /** Alerts visible to this clinician (for the "new alerts" indicator). */
   alerts: readonly Alert[];
   worker: WorkerHealth;
-}
-
-function resultText(shown: number, total: number): string {
-  const patients = `patient${total > 1 ? "s" : ""}`;
-  return shown === total ? `${total} ${patients}` : `${shown} sur ${total} ${patients} affichés`;
+  lang?: Language;
 }
 
 /** Search + quick filters over the queue; filtering removes rows, never re-orders them. */
-export function PatientQueue({ rows, alerts, worker }: PatientQueueProps) {
+export function PatientQueue({ rows, alerts, worker, lang = "fr" }: PatientQueueProps) {
   const headingId = useId();
+  const copy = DASHBOARD_COPY[lang];
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<QueueFilter>("all");
   const shown = useMemo(() => filterQueue(rows, { filter, search }), [rows, filter, search]);
@@ -40,38 +38,50 @@ export function PatientQueue({ rows, alerts, worker }: PatientQueueProps) {
 
   return (
     <section className={styles.queue} aria-labelledby={headingId}>
-      <div className={styles.queueHead}>
-        <h2 id={headingId} className={styles.queueTitle}>
-          File de priorité
-        </h2>
-        <WorkerStatusBadge health={worker} />
+      {/* The page h1 already reads "Patients": the section keeps its heading for assistive tech only. */}
+      <h2 id={headingId} className="visually-hidden">
+        {copy.queueHeading}
+      </h2>
+      <QueueToolbar
+        search={search}
+        onSearchChange={setSearch}
+        filter={filter}
+        onFilterChange={setFilter}
+        counts={counts}
+        lang={lang}
+      />
+      <div className={styles.tableMeta}>
+        <p className={styles.resultCount} role="status">
+          {resultText(shown.length, rows.length, lang)}
+        </p>
+        <p className={styles.caveat}>
+          <strong className={styles.caveatLead}>{copy.caveatLead}</strong> {copy.caveat}
+        </p>
       </div>
-      <QueueToolbar search={search} onSearchChange={setSearch} filter={filter} onFilterChange={setFilter} counts={counts} />
-      <p className={styles.resultCount} role="status">
-        {resultText(shown.length, rows.length)}
-      </p>
       <div className={styles.tableCard}>
         {shown.length > 0 ? (
-          <PatientTable rows={shown} newAlerts={newAlerts} />
+          <PatientTable rows={shown} newAlerts={newAlerts} lang={lang} />
         ) : (
           <EmptyState
             compact
             icon="search"
-            title="Aucun patient ne correspond"
-            description="Modifiez la recherche ou le filtre. Les patients restent dans la file : seul l’affichage est filtré."
+            title={copy.noMatchTitle}
+            description={copy.noMatchBody}
             action={
               <Button variant="secondary" iconStart="x" onClick={reset}>
-                Réinitialiser la recherche et les filtres
+                {copy.resetFilters}
               </Button>
             }
           />
         )}
       </div>
-      <p className={styles.footnote}>
-        Estimation IA : signal d’attention expérimental, à revoir, calculé seulement à votre demande dans le dossier ; ce
-        n’est pas une probabilité clinique et il ne change pas l’ordre. Ordre : priorité haute, suivi requis, travail en
-        attente pour vous, puis les autres (inconnu avant vert).
-      </p>
+      <div className={styles.queueFoot}>
+        <details className={styles.ordering}>
+          <summary className={styles.orderingSummary}>{copy.orderingSummary}</summary>
+          <p className={styles.footnote}>{copy.orderingBody}</p>
+        </details>
+        <WorkerStatusBadge health={worker} lang={lang} />
+      </div>
     </section>
   );
 }

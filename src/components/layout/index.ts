@@ -6,3 +6,5 @@ export { useActorSession, type ActorSession } from "./SessionContext";
 export { useLogout, LOGOUT_NOTICE_KEY, type UseLogoutOptions, type UseLogoutResult } from "./useLogout";
 export { isNavActive, type ShellNavItem } from "./nav";
 export { SHELL_COPY, type ShellCopy } from "./shell-copy";
+export { ClinicianLanguageProvider, useClinicianLanguage, type ClinicianLanguage } from "./ClinicianLanguage";
+export { FRENCH_SOURCE } from "./source-language";

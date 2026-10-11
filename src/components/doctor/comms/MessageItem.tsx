@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge, Button, Timestamp } from "@/components/ui";
+import { UNKNOWN_LANGUAGE_TEXT } from "@/components/layout/source-language";
 import type { CareMessage } from "@/lib/client/care-api";
 import { CARE_COPY } from "@/lib/client/copy/care";
 import { canReviewMessage, messageStatus } from "./message-state";
@@ -15,6 +16,18 @@ interface MessageItemProps {
   onReview: (message: CareMessage) => void;
 }
 
+/** Marks a message as the focus stand-in for its own review button (see messageReviewFocusFallback). */
+const REVIEW_FOCUS_RETURN = "[data-message-review-focus-return]";
+
+/**
+ * Captured by the review dialog when it opens, from the button that opened it:
+ * the message holding that button. Recording the review removes the button
+ * together with the dialog, so focus lands on the message that was just reviewed.
+ */
+export function messageReviewFocusFallback(opener: HTMLElement): HTMLElement | null {
+  return opener.closest<HTMLElement>(REVIEW_FOCUS_RETURN);
+}
+
 function authorLabel(message: CareMessage, mine: boolean): string {
   if (mine) return "Vous";
   if (message.authorCategory === "patient") return "Patient";
@@ -27,7 +40,8 @@ export function MessageItem({ message, viewerId, canManageCare, onReview }: Mess
   const status = messageStatus(message, viewerId);
   const review = message.review;
   return (
-    <li className={status.mine ? `${styles.message} ${styles.mine}` : styles.message}>
+    // tabIndex -1 on every message, reviewed or not: focusable by script once its button is gone, never a tab stop.
+    <li className={status.mine ? `${styles.message} ${styles.mine}` : styles.message} data-message-review-focus-return tabIndex={-1}>
       <div className={styles.messageHead}>
         <span className={styles.author}>{authorLabel(message, status.mine)}</span>
         <Badge tone="muted">{copy.messageKind[message.kind]}</Badge>
@@ -42,7 +56,10 @@ export function MessageItem({ message, viewerId, canManageCare, onReview }: Mess
           conversation.
         </p>
       ) : null}
-      <p className={styles.messageText}>{message.text}</p>
+      {/* Authored text, language not recorded: unknown lang + automatic direction (never the French island's fr/ltr). */}
+      <p className={styles.messageText} {...UNKNOWN_LANGUAGE_TEXT}>
+        {message.text}
+      </p>
       <div className={styles.badges}>
         <Badge tone="neutral" icon="check">
           {copy.messageState.recorded}
@@ -76,7 +93,7 @@ export function MessageItem({ message, viewerId, canManageCare, onReview }: Mess
       {review ? (
         <p className={styles.reviewLine}>
           Revu {review.clinicianId === viewerId ? "par vous" : "par un autre médecin"} <Timestamp iso={review.at} format="relative" /> — motif :{" "}
-          {review.reason}
+          <span {...UNKNOWN_LANGUAGE_TEXT}>{review.reason}</span>
         </p>
       ) : null}
       {canReviewMessage(message, canManageCare) ? (

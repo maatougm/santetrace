@@ -1,6 +1,7 @@
 "use client";
 
 import { Field, TextArea, TextInput, describedBy } from "@/components/ui";
+import { UNKNOWN_LANGUAGE_TEXT } from "@/components/layout/source-language";
 import { LIMITS, type ResultDraft, type ResultErrors } from "./validation";
 import styles from "./Review.module.css";
 
@@ -75,6 +76,7 @@ export function ResultFields({ idPrefix, draft, errors, onChange, showExam, reas
       </div>
       <Field label={reasonLabel} htmlFor={id("reason")} hint={reasonHint} error={errors.reason} required>
         <TextArea
+          {...UNKNOWN_LANGUAGE_TEXT}
           id={id("reason")}
           rows={2}
           value={draft.reason}

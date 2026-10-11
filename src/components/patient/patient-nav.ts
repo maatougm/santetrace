@@ -40,7 +40,7 @@ export interface HubLink<K extends string> {
   icon: IconName;
 }
 
-/** Home 2×2 quick links. */
+/** Home secondary quick links (compact labelled list; never competes with "Ajouter une mesure"). */
 export const HOME_QUICK_LINKS: readonly HubLink<QuickLinkKey>[] = [
   { href: "/patient/messages", key: "messages", icon: "message" },
   { href: "/patient/plan", key: "plan", icon: "clipboard" },
@@ -64,7 +64,8 @@ export type PlanLinkKey = keyof Pick<CareCopy["plan"], "reminders" | "assistant"
 
 /** Always shown on the plan screen (live or device copy). */
 export const PLAN_LINKS: readonly HubLink<PlanLinkKey>[] = [
-  { href: "/patient/reminders", key: "reminders", icon: "pill" },
+  // Neutral: reminders cover care actions (e.g. measuring blood pressure), not only medication.
+  { href: "/patient/reminders", key: "reminders", icon: "bell" },
   { href: "/patient/plan/assistant", key: "assistant", icon: "message" },
 ];
 

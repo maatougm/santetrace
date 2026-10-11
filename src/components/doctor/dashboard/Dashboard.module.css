@@ -14,36 +14,92 @@
   gap: var(--space-4);
 }
 
-.headerActions {
-  display: flex;
-  flex-wrap: wrap;
+/* ---------- Compact page header: Patients + count, freshness, quiet invitations link ---------- */
+
+/* Phone: title and invitations link share the first row, freshness sits under them. */
+.pageHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title link"
+    "fresh fresh";
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-1) var(--space-4);
 }
 
-/* Queue section */
+@media (min-width: 768px) {
+  .pageHead {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas: "title fresh link";
+  }
+}
+
+.pageTitle {
+  grid-area: title;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  color: var(--color-ink);
+}
+
+/* Neutral count: not blue (blue means action) and not a status colour. */
+.titleCount {
+  display: inline-block;
+  min-width: 2.25rem;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-sunken);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  vertical-align: 0.2em;
+  color: var(--color-ink-2);
+}
+
+.pageFresh {
+  grid-area: fresh;
+  justify-self: start;
+  min-width: 0;
+}
+
+.quietLink {
+  grid-area: link;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  min-height: var(--touch-min);
+  padding-inline: var(--space-1);
+  border-radius: var(--radius-xs);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.quietLink:hover {
+  color: var(--color-accent-strong);
+  text-decoration-thickness: 2px;
+}
+
+.quietLink:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+/* ---------- Queue section ---------- */
 
 .queue {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
   min-width: 0;
-}
-
-.queueHead {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2) var(--space-4);
-}
-
-.queueTitle {
-  margin: 0;
-  font-size: var(--text-lg);
-  font-weight: var(--weight-bold);
-  line-height: var(--leading-tight);
-  color: var(--color-ink);
 }
 
 /* Search + quick filters */
@@ -60,10 +116,71 @@
   max-width: 28rem;
 }
 
+/* The search label is an important phone control label: 16px, not the 14px field default. */
+.search label {
+  font-size: var(--text-base);
+}
+
+.filterDisclosure {
+  min-width: 0;
+}
+
+/* Native disclosure summary: 44px+, 16px, names the active filter and its count. */
+.filterSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink);
+  list-style: none;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.filterSummary::-webkit-details-marker {
+  display: none;
+}
+
+.filterSummary:hover {
+  background: var(--color-hover);
+}
+
+.filterSummary:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+.filterSummaryText {
+  min-width: 0;
+}
+
+.filterChevron {
+  flex: none;
+  color: var(--color-ink-3);
+}
+
+.filterDisclosure[open] .filterChevron {
+  transform: rotate(180deg);
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+}
+
+.filterDisclosure[open] .filters {
+  margin-block-start: var(--space-2);
 }
 
 .filter {
@@ -78,7 +195,7 @@
   border-radius: var(--radius-sm);
   background: var(--color-surface);
   font: inherit;
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   font-weight: var(--weight-semibold);
   line-height: var(--leading-snug);
   font-variant-numeric: tabular-nums;
@@ -132,20 +249,99 @@
   box-shadow: 0 0 0 2px var(--color-surface);
 }
 
+/*
+ * From 768px the same five buttons are always visible: QueueToolbar holds the
+ * disclosure open with its `open` attribute (no CSS pseudo-element trick) and
+ * the summary is hidden, so the buttons stay focusable in every browser.
+ */
+@media (min-width: 768px) {
+  .filter {
+    font-size: var(--text-sm);
+  }
+
+  .filterSummary {
+    display: none;
+  }
+
+  .filterDisclosure[open] .filters {
+    margin-block-start: 0;
+  }
+}
+
+/* Result line and the always-visible estimate caveat, just above the table */
+
+.tableMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-4);
+}
+
 .resultCount {
   margin: 0;
   font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-2);
+}
+
+.caveat {
+  margin: 0;
+  max-width: 70ch;
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
   color: var(--color-ink-3);
+}
+
+.caveatLead {
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-2);
+}
+
+.queueFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.ordering {
+  flex: 1 1 24rem;
+  min-width: 0;
+}
+
+.orderingSummary {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.orderingSummary:hover {
+  color: var(--color-accent-strong);
+}
+
+.orderingSummary:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+  border-radius: var(--radius-xs);
 }
 
 .footnote {
   margin: 0;
+  max-width: 75ch;
   font-size: var(--text-sm);
   line-height: var(--leading-normal);
   color: var(--color-ink-3);
 }
 
-/* Queue table: Patient, Urgence, Score */
+/* ---------- Queue table: Patient · Urgence · Estimation IA ---------- */
 
 .tableCard {
   min-width: 0;
@@ -175,13 +371,18 @@
   color: var(--color-ink-2);
 }
 
+/* Approximate desktop split: name 58%, urgency 27%, estimate the rest. */
+.colPatient {
+  width: 58%;
+}
+
 .colUrgency {
-  width: 40%;
+  width: 27%;
 }
 
 .colScore {
-  width: 7.5rem;
   text-align: end;
+  white-space: normal;
 }
 
 .td {
@@ -259,7 +460,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-1) var(--space-3);
-  margin-block-start: var(--space-1);
 }
 
 .indicator {
@@ -285,14 +485,24 @@
 .scoreValue {
   display: inline-flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: end;
   gap: 0;
   line-height: var(--leading-tight);
 }
 
-.scoreValue .score {
-  color: var(--color-ink);
+/* Genuine server value: 22px tabular figures, the /100 unit quieter. */
+.score {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  color: var(--color-ink);
+}
+
+.scoreMax {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-ink-3);
 }
 
 .scoreNote {
@@ -302,17 +512,60 @@
   white-space: nowrap;
 }
 
-.score {
-  font-weight: var(--weight-semibold);
-  font-variant-numeric: tabular-nums;
+/* No value: the dash, then its reason written out (touch screens have no tooltip). */
+.scoreNone {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: end;
+  gap: var(--space-0-5);
+  max-inline-size: 100%;
   color: var(--color-ink-3);
+}
+
+.scoreDash {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+}
+
+/*
+ * Bounded and breakable: wraps inside the cell at 320px and never widens the
+ * score column. match-parent keeps the cell's end alignment even when a
+ * French reason is an LTR island under the Arabic shell.
+ */
+.scoreReason {
+  max-inline-size: 7rem;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  color: var(--color-ink-2);
+  text-align: match-parent;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .cellLabel {
   display: none;
 }
 
-/* Phones: each row stacks (name, then urgency and score) so nothing scrolls sideways. */
+/* ---------- Phones: each row becomes name / urgency, with the estimate at the inline end ---------- */
+
+@media (max-width: 767.98px) {
+  .page {
+    gap: var(--space-4);
+  }
+
+  .queue {
+    gap: var(--space-3);
+  }
+}
+
+@media (max-width: 640px) {
+  .pageTitle {
+    font-size: var(--text-2xl);
+  }
+}
+
 @media (max-width: 519.98px) {
   .table,
   .table > tbody {
@@ -331,10 +584,13 @@
   .row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: var(--space-2) var(--space-3);
+    grid-template-areas:
+      "patient score"
+      "urgency score";
+    align-items: start;
+    gap: var(--space-1) var(--space-3);
     min-height: var(--touch-min);
-    padding: var(--space-3);
+    padding: var(--space-1) var(--space-3) var(--space-3);
     border-inline-start: 4px solid var(--row-edge);
     border-block-end: 1px solid var(--color-line-subtle);
   }
@@ -351,8 +607,25 @@
   }
 
   .row > .td:first-child {
-    grid-column: 1 / -1;
     border-inline-start: 0;
+  }
+
+  .row > .patientCell {
+    grid-area: patient;
+  }
+
+  .row > .urgencyCell {
+    grid-area: urgency;
+  }
+
+  .row > .scoreCell {
+    grid-area: score;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: var(--space-0-5);
+    padding-block-start: var(--space-2);
   }
 
   .row:hover,
@@ -365,15 +638,16 @@
     background: transparent;
   }
 
-  .row > .scoreCell {
-    display: inline-flex;
-    align-items: baseline;
-    gap: var(--space-1);
+  .indicators {
+    margin-block-end: var(--space-1);
   }
 
-  .cellLabel {
-    display: inline;
-    font-size: var(--text-xs);
+  /* Without a value, name the column next to the dash (with a value, "IA · à revoir" already does). */
+  .scoreCell[data-score="none"] .cellLabel {
+    display: block;
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-tight);
     color: var(--color-ink-3);
   }
 }

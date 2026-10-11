@@ -131,6 +131,44 @@
   border-block-start: 1px solid var(--color-line-subtle);
 }
 
+/*
+ * Plan card header actions, inside the shared Card actions slot. The shared
+ * Button is nowrap, so "Modifier la date limite de revue…" (309px) overflowed
+ * a 320px screen. Element + class outranks `.button` by specificity, never by
+ * stylesheet order (CSS module order differs between dev and prod).
+ * A label wraps only when its button alone is wider than the line, so wide
+ * screens keep one-line, 44px-tall buttons.
+ */
+.planHeaderActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.planHeaderActions > button,
+.planHeaderActions > a {
+  padding-block: var(--space-2);
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+/* Phones: one full-width action per line, as in dialog footers. */
+@media (max-width: 480px) {
+  .planHeaderActions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .planHeaderActions > button,
+  .planHeaderActions > a {
+    width: 100%;
+  }
+}
+
 /* Sources */
 
 .sourceList {

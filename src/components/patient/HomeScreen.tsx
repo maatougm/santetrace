@@ -1,17 +1,17 @@
 "use client";
 
 /**
- * Simplified patient home, mobile first: greeting, the one status card, one
- * primary action, the next step, quick links, then details behind native
- * disclosures. Always visible when they apply, without opening anything: the
+ * Simplified patient home, mobile first, in this order: a compact greeting,
+ * the one status card, the single primary action ("Ajouter une mesure",
+ * available offline), the real result of the last send, the latest reading,
+ * then the next step, the secondary quick-link list and the outbox
+ * disclosure. Always visible when they apply, without opening anything: the
  * red episode, a missing referent, stale/unknown status, consent not recorded,
  * suspect readings and approvals pending at the doctor (status card rows),
  * and the unsent/offline state (the shell's StatusStrip).
  */
-import Link from "next/link";
-import { Icon, LinkButton } from "@/components/ui";
+import { LinkButton } from "@/components/ui";
 import type { Language } from "@/lib/client/api";
-import { SHARE_COPY } from "@/lib/client/copy/share";
 import { HomeNextStep } from "./home/HomeNextStep";
 import { HomeQuickLinks } from "./home/HomeQuickLinks";
 import { HomeStatusCard } from "./home/HomeStatusCard";
@@ -24,7 +24,6 @@ import { firstName, homeAttention, nextStep } from "./home/home-view";
 import { NoReferentNotice } from "./monitoring/NoReferentNotice";
 import { RedEpisode } from "./monitoring/RedEpisodeBanner";
 import { needsReferent } from "./monitoring/monitoring-view";
-import { DEVICES_HREF } from "./patient-nav";
 import { usePatientRuntime } from "./PatientRuntime";
 import type { PatientData } from "./usePatientRecord";
 import { RecordGate } from "./RecordGate";
@@ -49,6 +48,7 @@ function freshness(data: PatientData): Freshness {
   return { live: data.origin === "server", stale: data.origin !== "server" || data.error !== null, staleSince };
 }
 
+/** The one primary action of the home (the devices link is a quiet entry in the quick links). */
 function PrimaryAction({ lang }: { lang: Language }) {
   return (
     <div className={css.primary}>
@@ -56,10 +56,6 @@ function PrimaryAction({ lang }: { lang: Language }) {
       <LinkButton href="/patient/measure" variant="primary" size="lg" fullWidth iconStart="plus">
         {HOME_COPY[lang].addMeasure}
       </LinkButton>
-      <Link href={DEVICES_HREF} className={css.textLink}>
-        {SHARE_COPY[lang].simulator.title}
-        <Icon name="chevron-right" size={18} />
-      </Link>
     </div>
   );
 }
@@ -96,12 +92,14 @@ export function HomeScreen() {
           </RecordGate>
           <PrimaryAction lang={lang} />
           {lastResult ? <LastResult entry={lastResult} lang={lang} t={t} onDismiss={() => setLastResult(null)} /> : null}
-          {step ? <HomeNextStep step={step} lang={lang} t={t} /> : null}
+          {/* Latest reading straight after the action and its real result, before any shortcut. */}
+          {record ? <LatestReading record={record} lang={lang} t={t} /> : null}
         </div>
 
         <div className={css.column}>
+          {step ? <HomeNextStep step={step} lang={lang} t={t} /> : null}
+          {/* Secondary list: never competes with the measurement action above. */}
           <HomeQuickLinks lang={lang} />
-          {record ? <LatestReading record={record} lang={lang} t={t} /> : null}
           <OutboxDetails />
         </div>
       </div>

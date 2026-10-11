@@ -31,6 +31,7 @@ import { usePatientAccess } from "../PatientAccessScope";
 import { reviewHref } from "../shared/routes";
 import { errorText } from "../shared/ApiErrorState";
 import { DOCUMENT_STATUS_LABEL } from "../shared/labels";
+import { documentLabCounts, readability, type ReadAccess, type VisibleCount } from "./read-visibility";
 import styles from "./Record.module.css";
 
 const NO_PERMISSIONS: DocumentPermissions = { canRead: false, canUpload: false, canReviewLabs: false };
@@ -44,10 +45,19 @@ const STATUS_TONE: Record<CareDocument["status"], { tone: BadgeTone; icon: IconN
   failed: { tone: "outline", icon: "x-circle" },
 };
 
+/** Nothing readable while no record is in scope. */
+const NO_READ_ACCESS: ReadAccess = { owner: false, scopes: [] };
+const NOT_SHARED = "Non partagé";
+
 interface DocumentRow {
   document: CareDocument;
-  pending: number;
-  confirmed: number;
+  /** null = structured values not shared with this account (unknown, never 0). */
+  pending: VisibleCount;
+  confirmed: VisibleCount;
+}
+
+function CountCell({ count }: { count: VisibleCount }) {
+  return count === null ? <span className={styles.muted}>{NOT_SHARED}</span> : <>{count}</>;
 }
 
 interface DocumentsSectionProps {
@@ -83,6 +93,9 @@ function uploadFailure(error: unknown): string {
 export function DocumentsSection({ patientId, documents, candidates, observations, onUploaded }: DocumentsSectionProps) {
   const { fence, record } = usePatientAccess();
   const permissions = record ? documentPermissions(record.access) : NO_PERMISSIONS;
+  // Read visibility from the current envelope: a PDF can be shared while its extracted values are not.
+  const readAccess = record?.access ?? NO_READ_ACCESS;
+  const labsShared = readability(readAccess).labs;
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
@@ -120,11 +133,10 @@ export function DocumentsSection({ patientId, documents, candidates, observation
 
   const rows: DocumentRow[] = [...documents]
     .sort((a, b) => Date.parse(b.uploadedAt) - Date.parse(a.uploadedAt))
-    .map((document) => ({
-      document,
-      pending: candidates.filter((c) => c.documentId === document.id && c.status === "proposed").length,
-      confirmed: observations.filter((o) => o.documentId === document.id).length,
-    }));
+    .map((document) => {
+      const { pending, confirmed } = documentLabCounts({ access: readAccess, candidates, observations }, document.id);
+      return { document, pending, confirmed };
+    });
 
   const columns: TableColumn<DocumentRow>[] = [
     {
@@ -149,14 +161,15 @@ export function DocumentsSection({ patientId, documents, candidates, observation
         </span>
       ),
     },
-    { key: "pending", header: "À revoir", numeric: true, render: ({ pending }) => pending },
-    { key: "confirmed", header: "Confirmés", numeric: true, render: ({ confirmed }) => confirmed },
+    { key: "pending", header: "À revoir", numeric: true, render: ({ pending }) => <CountCell count={pending} /> },
+    { key: "confirmed", header: "Confirmés", numeric: true, render: ({ confirmed }) => <CountCell count={confirmed} /> },
     {
       key: "open",
       header: <span className={styles.srOnly}>Action</span>,
       align: "end",
       render: ({ document, pending }) => {
-        const toReview = pending > 0 && permissions.canReviewLabs;
+        // An unknown (not shared) count never turns into "Revoir"; the PDF itself stays openable.
+        const toReview = pending !== null && pending > 0 && permissions.canReviewLabs;
         return (
           <LinkButton href={reviewHref(patientId, document.id)} size="sm" variant={toReview ? "primary" : "secondary"} iconEnd="arrow-right">
             {toReview ? "Revoir" : "Ouvrir"}
@@ -172,8 +185,10 @@ export function DocumentsSection({ patientId, documents, candidates, observation
     <div className={styles.sectionStack}>
       {!permissions.canUpload ? (
         <Notice tone="neutral" icon="lock" title="Consultation seule">
-          Le dépôt de documents et la revue des analyses sont réservés au médecin référent. Vous pouvez consulter les documents partagés et
-          leurs valeurs.
+          Le dépôt de documents et la revue des analyses sont réservés au médecin référent.{" "}
+          {labsShared
+            ? "Vous pouvez consulter les documents partagés et leurs valeurs."
+            : "Vous pouvez consulter les documents partagés ; leurs valeurs extraites ne sont pas partagées avec ce compte."}
         </Notice>
       ) : null}
       {permissions.canUpload ? (
@@ -231,7 +246,11 @@ export function DocumentsSection({ patientId, documents, candidates, observation
             columns={columns}
             rows={rows}
             rowKey={(row) => row.document.id}
-            caption="Documents sources. « À revoir » = valeurs proposées non confirmées, exclues des courbes."
+            caption={
+              labsShared
+                ? "Documents sources. « À revoir » = valeurs proposées non confirmées, exclues des courbes."
+                : "Documents sources. Valeurs extraites non partagées avec ce compte : « À revoir » et « Confirmés » restent inconnus."
+            }
             scrollLabel="Tableau des documents"
           />
         </div>

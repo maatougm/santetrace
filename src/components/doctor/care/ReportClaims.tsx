@@ -1,13 +1,25 @@
 "use client";
 
 import { Badge } from "@/components/ui";
+import { UNKNOWN_LANGUAGE_TEXT } from "@/components/layout/source-language";
 import type { ClinicianReport, GroundedClaim, SourceRef } from "@/contracts/monitoring";
 import { CARE_COPY, claimCodeLabel } from "@/lib/client/copy/care";
-import { claimParameterRows, groupClaims, resolveClaimSources } from "./report-claims";
+import { claimParameterRows, groupClaims, resolveClaimSources, type ClaimParameterRow } from "./report-claims";
 import { SourceList } from "./SourceList";
 import styles from "./Care.module.css";
 
 const copy = CARE_COPY.fr;
+
+/**
+ * A textual value shown exactly as the server sent it (external-note text, a
+ * typed label, any unmapped token or literal date) is not known French: it gets
+ * an unknown language and automatic direction. Vocabulary-mapped values,
+ * formatted dates, numbers and Oui/Non stay in the report's French island.
+ */
+function sentVerbatimText(row: ClaimParameterRow, parameters: GroundedClaim["parameters"]): boolean {
+  const raw = Object.hasOwn(parameters, row.key) ? parameters[row.key] : undefined;
+  return typeof raw === "string" && row.value === raw;
+}
 
 function ClaimItem({ claim, sources }: { claim: GroundedClaim; sources: readonly SourceRef[] }) {
   const parameters = claimParameterRows(claim.parameters);
@@ -19,8 +31,8 @@ function ClaimItem({ claim, sources }: { claim: GroundedClaim; sources: readonly
         <dl className={styles.params}>
           {parameters.map((row) => (
             <div key={row.key}>
-              <dt>{row.key}</dt>
-              <dd>{row.value}</dd>
+              <dt>{row.label}</dt>
+              <dd {...(sentVerbatimText(row, claim.parameters) ? UNKNOWN_LANGUAGE_TEXT : {})}>{row.value}</dd>
             </div>
           ))}
         </dl>
@@ -34,11 +46,14 @@ function ClaimItem({ claim, sources }: { claim: GroundedClaim; sources: readonly
   );
 }
 
-/** Claims grouped by category; hypotheses framed apart as a clinician-only AI draft. */
+/**
+ * Claims grouped by category; hypotheses framed apart as a clinician-only AI draft.
+ * The report is authored in French: it keeps its own language and direction under an Arabic shell.
+ */
 export function ReportClaims({ report }: { report: ClinicianReport }) {
   const { groups, hypotheses } = groupClaims(report.claims);
   return (
-    <div className={styles.stack}>
+    <div className={styles.stack} lang="fr" dir="ltr">
       {groups.length === 0 ? <p className={styles.mutedBlock}>Aucune affirmation de faits dans ce rapport.</p> : null}
       {groups.map((group) => (
         <section key={group.category} className={styles.tightStack} aria-label={copy.claimCategory[group.category]}>

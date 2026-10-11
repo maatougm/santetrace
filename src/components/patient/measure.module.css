@@ -4,6 +4,23 @@
   gap: var(--space-5);
 }
 
+/* Field labels the patient acts on read at 16px (the shared Field label is 14px). */
+.form label[for] {
+  font-size: var(--text-base);
+}
+
+/*
+ * Phones and tablets: the bottom tab bar is fixed (PatientShell, below 960px).
+ * The shell pads the end of the page; this keeps a focused or scrolled-to
+ * control (submit, preview and result actions) clear of the bar and the
+ * safe-area inset instead of stopping underneath it.
+ */
+@media (max-width: 959.98px) {
+  .form :is(a, button, input) {
+    scroll-margin-block-end: calc(var(--tabbar-height) + env(safe-area-inset-bottom) + var(--space-4));
+  }
+}
+
 .block {
   display: flex;
   flex-direction: column;
@@ -208,6 +225,21 @@
   flex: 1;
 }
 
+/*
+ * Phones: date and time beside "Maintenant" left the field ~130px and cut the
+ * value ("11/10/202"). Stack them: full-width field, full-width button below.
+ */
+@media (max-width: 479.98px) {
+  .timeRow {
+    flex-direction: column;
+  }
+
+  /* Content height in the column (no 0% basis); width comes from the row's stretch. */
+  .timeInput {
+    flex: 0 0 auto;
+  }
+}
+
 /* ---------- Preview ---------- */
 
 .previewSlip {
@@ -240,8 +272,9 @@
   border-bottom: 1px dashed var(--color-line);
 }
 
+/* What is being checked before sending: a label, so 16px. */
 .previewRow dt {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   color: var(--color-ink-3);
 }
 

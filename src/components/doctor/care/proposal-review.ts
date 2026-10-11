@@ -123,6 +123,22 @@ export function buildEditInput(proposal: CareProposal, templateId: string, reaso
   };
 }
 
+/**
+ * Action preselected when the review dialog opens. Only re-examining a stale
+ * draft keeps its own registered action (the dialog says it can be kept); a
+ * current draft, an unknown record context or an action outside the registry
+ * opens empty. The reason, the revision and the later decision stay explicit.
+ */
+export function initialEditTemplate(
+  target: { mode: ProposalDecision["decision"] | "edit"; proposal: CareProposal } | null,
+  currentGuard: RevisionGuard | null,
+): string {
+  if (target?.mode !== "edit" || !currentGuard) return "";
+  const { guard, action } = target.proposal;
+  const stale = !sameGuard(guard, currentGuard);
+  return stale && EDITABLE_TEMPLATE_IDS.includes(action.templateId) ? action.templateId : "";
+}
+
 export interface ProposalGroups {
   home_measurement: CareProposal[];
   lab_exam: CareProposal[];

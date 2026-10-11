@@ -9,9 +9,11 @@ import { useState } from "react";
 import { useLogout } from "@/components/layout";
 import { Badge, Button, Card, Dialog, EmptyState, ErrorState, Notice, PageHeader } from "@/components/ui";
 import { describeApiError, getSummary, revokeConsent, type SummaryResponse } from "@/lib/client/api";
+import type { OutboxScope } from "@/lib/client/outbox";
 import { DEVICE_PURGE_FAILED } from "@/lib/client/session-cleanup";
 import { usePolling } from "@/lib/client/use-polling";
 import { When } from "./bits";
+import { consentDisplay } from "./consent-display";
 import { usePatientRuntime } from "./PatientRuntime";
 import { LoadingBlock } from "./RecordGate";
 import styles from "./patient.module.css";
@@ -75,6 +77,25 @@ function SummaryCard() {
   );
 }
 
+function ConsentState({ display }: { display: "loading" | "unknown" }) {
+  const { t, lang, data } = usePatientRuntime();
+  if (display === "loading") return <LoadingBlock label={t.common.loading} lines={2} />;
+  if (data.error?.isOffline) {
+    return <EmptyState icon="wifi-off" title={t.connection.offline} description={t.connection.noServerData} />;
+  }
+  const description = describeApiError(data.error, lang);
+  return (
+    <ErrorState
+      title={description.title}
+      message={description.message}
+      code={description.code}
+      onRetry={() => void data.refresh()}
+      retryLabel={t.common.retry}
+      retrying={data.isRefreshing}
+    />
+  );
+}
+
 function ConsentSection() {
   const { t, lang, scope, data, beforeLogout } = usePatientRuntime();
   const { logout, pending: loggingOut, error: logoutError } = useLogout({ onBeforeLogout: beforeLogout });
@@ -82,8 +103,15 @@ function ConsentSection() {
   const logoutStopped = logoutError !== null && !loggingOut;
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [done, setDone] = useState(false);
+  // Shows the withdrawal before the refresh lands; only for the actor that revoked.
+  const [revokedScope, setRevokedScope] = useState<OutboxScope | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const display = consentDisplay({
+    acknowledged: revokedScope !== null && revokedScope === scope,
+    record: data.record,
+    origin: data.origin,
+    error: data.error,
+  });
 
   const revoke = async () => {
     if (!scope) return;
@@ -91,7 +119,7 @@ function ConsentSection() {
     setError(null);
     try {
       await revokeConsent(scope.patientId);
-      setDone(true);
+      setRevokedScope(scope);
       setOpen(false);
       void data.refresh();
     } catch (caught) {
@@ -105,7 +133,7 @@ function ConsentSection() {
   return (
     <Card title={t.summary.consentTitle} tone="muted" headingLevel={2}>
       <div className={styles.stack}>
-        {done ? (
+        {display === "revoked" ? (
           <>
             <Notice
               tone="info"
@@ -135,6 +163,8 @@ function ConsentSection() {
               </Notice>
             ) : null}
           </>
+        ) : display !== "active" ? (
+          <ConsentState display={display} />
         ) : (
           <>
             <p className={styles.metaLine}>{t.summary.consentBody}</p>

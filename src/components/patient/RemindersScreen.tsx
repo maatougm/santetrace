@@ -1,12 +1,16 @@
 "use client";
 
 /**
- * Treatment reminders. Notification delivery (server `delivery`) is shown
- * separately from the patient's own self-report. No report = "Non déclaré"
- * (unknown), never "not taken". Reports go through the outbox with a stable
- * clientId; the server accepts one report per reminder. Reminders created for
- * a care action follow that action (reminder-view): no "Pris / Pas pris", and
- * a finished action is listed as past.
+ * "Mes rappels": every reminder of the patient's plan, medication or care
+ * action. The page heading, intro and empty state stay neutral (a
+ * blood-pressure task is not "treatment"); server reminder titles are shown
+ * as written. Notification delivery (server `delivery`) is shown separately
+ * from the patient's own self-report. Medication reminders only: no report =
+ * "Non déclaré" (unknown), never "not taken"; reports go through the outbox
+ * with a stable clientId and the server accepts one report per reminder.
+ * Reminders created for a care action follow that action (reminder-view): no
+ * "Pris / Pas pris", and a finished action is listed as past. Their report
+ * area is labelled "Action du plan", never "Votre déclaration".
  */
 import { useState } from "react";
 import { Badge, Button, EmptyState, Icon, LinkButton, Notice, PageHeader, type IconName } from "@/components/ui";
@@ -158,6 +162,9 @@ function CareActionReport({ display }: { display: Exclude<ReminderDisplay, { mod
 
 function ReminderCard(props: ReminderCardProps & { display: ReminderDisplay }) {
   const { reminder, lang, t, display } = props;
+  // Only a medication reminder is declared here; a care action is labelled as a plan action.
+  const reportLabel =
+    display.mode === "medication" ? t.reminders.reportLabel : ASSIST_COPY[lang].reminders.planActionLabel;
   return (
     <article className={rem.card}>
       <header className={rem.head}>
@@ -165,7 +172,8 @@ function ReminderCard(props: ReminderCardProps & { display: ReminderDisplay }) {
           <Icon name={display.mode === "medication" ? "pill" : "clipboard"} size={20} />
         </span>
         <div className={rem.headText}>
-          <h3 className={rem.label}>{reminder.label}</h3>
+          {/* Server title shown verbatim; its own direction (Arabic or French) whatever the UI language. */}
+          <h3 className={rem.label} dir="auto">{reminder.label}</h3>
           <When iso={reminder.dueAt} lang={lang} label={t.reminders.due} />
         </div>
       </header>
@@ -178,7 +186,7 @@ function ReminderCard(props: ReminderCardProps & { display: ReminderDisplay }) {
         </span>
       </p>
       <div className={rem.reportBlock}>
-        <p className={rem.reportLabel}>{t.reminders.reportLabel}</p>
+        <p className={rem.reportLabel}>{reportLabel}</p>
         {display.mode === "medication" ? <SelfReport {...props} /> : <CareActionReport display={display} />}
       </div>
     </article>
@@ -197,7 +205,7 @@ function ReminderList({ record }: { record: PatientRecord }) {
   });
 
   const report = async (reminder: Reminder, taken: boolean): Promise<string | null> => {
-    if (!scope) return t.measure.result.noStorageBody;
+    if (!scope) return t.reminders.noStorage;
     const entry = createReminderAckEntry(scope, reminder, taken, record.patient.rules?.version ?? null);
     let persisted = true;
     try {
@@ -217,7 +225,7 @@ function ReminderList({ record }: { record: PatientRecord }) {
     }
     if (sent.state === "failed") void refresh();
     // Without local storage nothing was kept: say so instead of showing a queued state.
-    return persisted ? null : t.measure.result.noStorageBody;
+    return persisted ? null : t.reminders.noStorage;
   };
 
   // A reminder for a finished care action is past, whatever its due time.
@@ -225,7 +233,8 @@ function ReminderList({ record }: { record: PatientRecord }) {
 
   if (record.reminders.length === 0) {
     // "…programmé par votre équipe soignante" only when an accepted doctor exists (FR-027).
-    return <EmptyState icon="pill" title={careTeam.status === "present" ? t.reminders.empty : t.home.noReminders} />;
+    // Neutral bell: an empty list says "no reminders", not "no medication".
+    return <EmptyState icon="bell" title={careTeam.status === "present" ? t.reminders.empty : t.home.noReminders} />;
   }
 
   const renderGroup = (title: string, id: string, items: Reminder[]) =>
@@ -276,7 +285,7 @@ export function RemindersScreen() {
           </LinkButton>
         }
       />
-      {/* Reading a reminder is not doing it: only an explicit self-report counts. */}
+      {/* Reading a reminder is not doing it: medication is declared here, a plan action in the plan. */}
       <Notice tone="neutral" icon="info">
         {assist.readIsNotDone}
       </Notice>

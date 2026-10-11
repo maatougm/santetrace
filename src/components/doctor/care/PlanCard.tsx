@@ -8,7 +8,8 @@ import type { PatientRecord } from "@/lib/client/api";
 import { suggestProfileBindings, updateCarePlan, type PlanUpdate } from "@/lib/client/care-api";
 import { CARE_COPY } from "@/lib/client/copy/care";
 import { createClientId } from "@/lib/client/ids";
-import { hasScope, type DoctorSectionProps } from "../PatientAccessScope";
+import type { DoctorSectionProps } from "../PatientAccessScope";
+import { planAbsence } from "../record/read-visibility";
 import { errorText } from "../shared/ApiErrorState";
 import { useNow } from "../shared/hooks";
 import { uncoveredConditions } from "./coverage";
@@ -124,27 +125,29 @@ export function PlanCard({ patientId, record, fence, refresh }: DoctorSectionPro
       description="Versionné ; seules les actions validées par le médecin référent deviennent des consignes patient."
       actions={
         canManage ? (
-          plan?.state === "active" ? (
-            <>
-              <Button
-                variant="secondary"
-                iconStart="calendar"
-                onClick={() => {
-                  setOutcome(null);
-                  setEditingDeadline(true);
-                }}
-              >
-                Modifier la date limite de revue…
+          <div className={styles.planHeaderActions}>
+            {plan?.state === "active" ? (
+              <>
+                <Button
+                  variant="secondary"
+                  iconStart="calendar"
+                  onClick={() => {
+                    setOutcome(null);
+                    setEditingDeadline(true);
+                  }}
+                >
+                  Modifier la date limite de revue…
+                </Button>
+                <Button variant="ghost" iconStart="minus" onClick={() => open("suspend")}>
+                  Suspendre le plan…
+                </Button>
+              </>
+            ) : (
+              <Button variant="secondary" iconStart="check" onClick={() => open("activate")}>
+                Activer le plan…
               </Button>
-              <Button variant="ghost" iconStart="minus" onClick={() => open("suspend")}>
-                Suspendre le plan…
-              </Button>
-            </>
-          ) : (
-            <Button variant="secondary" iconStart="check" onClick={() => open("activate")}>
-              Activer le plan…
-            </Button>
-          )
+            )}
+          </div>
         ) : null
       }
     >
@@ -180,13 +183,19 @@ export function PlanCard({ patientId, record, fence, refresh }: DoctorSectionPro
               { label: "Actions approuvées", value: plan.actionIds.length },
             ]}
           />
-        ) : hasScope(record, "status") ? (
+        ) : planAbsence(record) === "none" ? (
           <p className={styles.row}>
             <Badge tone="outline">Aucun plan</Badge>
             <span className={styles.muted}>Le suivi démarre après activation par le médecin référent.</span>
           </p>
         ) : (
-          <p className={styles.mutedBlock}>Plan non visible avec les accès de ce compte.</p>
+          // A hidden plan is projected as null: status access alone cannot establish its absence.
+          <p className={styles.row}>
+            <Badge tone="muted" icon="lock">
+              Plan non partagé
+            </Badge>
+            <span className={styles.muted}>Plan non visible avec les accès de ce compte.</span>
+          </p>
         )}
         {plan ? (
           <div className={styles.tightStack}>

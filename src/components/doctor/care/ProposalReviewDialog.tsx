@@ -2,6 +2,7 @@
 
 import { useId, useState, type FormEvent } from "react";
 import { Button, Dialog, Field, Notice, Select, TextArea, describedBy } from "@/components/ui";
+import { UNKNOWN_LANGUAGE_TEXT } from "@/components/layout/source-language";
 import type { CareProposal, RevisionGuard } from "@/contracts/monitoring";
 import { runFenced, type AccessFence } from "@/lib/client/access-fence";
 import { reviewProposal, reviseProposal, type ProposalReviewResult } from "@/lib/client/care-api";
@@ -12,7 +13,7 @@ import { fmtDateTime } from "../shared/time";
 import { sameGuard } from "./guard";
 import { nextAttempt, type Attempt } from "./idempotency";
 import { DISCARDED_OUTCOME, classifyConflict, type Outcome } from "./outcome";
-import { EDITABLE_TEMPLATE_IDS, REVIEW_LIMITS, buildDecisionInput, buildEditInput } from "./proposal-review";
+import { EDITABLE_TEMPLATE_IDS, REVIEW_LIMITS, buildDecisionInput, buildEditInput, initialEditTemplate } from "./proposal-review";
 import type { ReviewMode } from "./ProposalItem";
 import styles from "./Care.module.css";
 
@@ -72,7 +73,7 @@ export function ProposalReviewDialog({ target, currentGuard, fence, onClose, onO
   if (key !== formKey) {
     setFormKey(key);
     setReason("");
-    setTemplate("");
+    setTemplate(initialEditTemplate(target, currentGuard));
     setError(null);
     setFailure(null);
     setAttempt(null);
@@ -180,6 +181,7 @@ export function ProposalReviewDialog({ target, currentGuard, fence, onClose, onO
         ) : null}
         <Field label={mode === "approve" ? "Motif de la validation" : "Motif"} htmlFor={reasonId} error={reasonError} required>
           <TextArea
+            {...UNKNOWN_LANGUAGE_TEXT}
             id={reasonId}
             value={reason}
             rows={3}

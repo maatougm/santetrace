@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Badge, EmptyState, LinkButton, Notice, PageHeader, Skeleton, Timestamp } from "@/components/ui";
 import type { Candidate } from "@/lib/client/api";
+import { documentLabCounts, readability, type DocumentLabCounts } from "../record/read-visibility";
 import { withObservation, withReview } from "../record/record-updates";
 import { ApiErrorState } from "../shared/ApiErrorState";
 import { DOCUMENT_STATUS_LABEL } from "../shared/labels";
@@ -29,6 +30,12 @@ function candidateIdFromHash(hash: string): string | null {
   } catch {
     return null;
   }
+}
+
+/** Header summary; a denied (empty) projection is "non partagées", never "0 au total". */
+function valuesSummary({ pending, total }: DocumentLabCounts): string {
+  if (pending === null || total === null) return "Valeurs extraites non partagées";
+  return `${pending} proposition${pending > 1 ? "s" : ""} à revoir · ${total} au total`;
 }
 
 /** Source-linked review: PDF on one side, proposed values on the other. */
@@ -88,12 +95,23 @@ export function DocumentReviewView({ patientId, documentId }: DocumentReviewView
   }
 
   if (!document) {
+    // A documents denial is projected as []: it must not read as "this document does not exist".
+    const documentsShared = readability(data.access).documents;
     return (
       <div className={styles.page}>
-        <PageHeader eyebrow="Revue EndoRecord" title="Document introuvable" back={back} actions={syncStatus} />
+        <PageHeader
+          eyebrow="Revue EndoRecord"
+          title={documentsShared ? "Document introuvable" : "Documents non partagés"}
+          back={back}
+          actions={syncStatus}
+        />
         <EmptyState
-          icon="file-text"
-          title="Ce document n’appartient pas à ce dossier ou n’existe plus"
+          icon={documentsShared ? "file-text" : "lock"}
+          title={
+            documentsShared
+              ? "Ce document n’appartient pas à ce dossier ou n’existe plus"
+              : "Le patient n’a pas partagé ses documents avec ce compte"
+          }
           description="Aucune donnée n’est affichée à sa place."
           action={
             <LinkButton href={documentsHref} variant="secondary" iconStart="arrow-left">
@@ -105,10 +123,12 @@ export function DocumentReviewView({ patientId, documentId }: DocumentReviewView
     );
   }
 
-  const pending = candidates.filter((c) => c.status === "proposed").length;
   const observationFor = (candidate: Candidate) => data.observations.find((o) => o.candidateId === candidate.id) ?? null;
-  // Reading stays open to any clinician with documents access; deciding needs lab-review authority.
+  // The PDF stays open to any clinician with documents access; its extracted values need
+  // owner or clinical + documents (a read right); deciding needs lab-review authority.
   const { canReviewLabs } = documentPermissions(data.access);
+  const { labs: valuesShared } = readability(data.access);
+  const counts = documentLabCounts(data, document.id);
 
   return (
     <div className={styles.page}>
@@ -119,9 +139,7 @@ export function DocumentReviewView({ patientId, documentId }: DocumentReviewView
           <span className={styles.headerMeta}>
             <Badge tone="outline">{DOCUMENT_STATUS_LABEL[document.status]}</Badge>
             <Timestamp iso={document.uploadedAt} label="Déposé le" />
-            <span>
-              {pending} proposition{pending > 1 ? "s" : ""} à revoir · {candidates.length} au total
-            </span>
+            <span>{valuesSummary(counts)}</span>
           </span>
         }
         back={back}
@@ -151,7 +169,13 @@ export function DocumentReviewView({ patientId, documentId }: DocumentReviewView
               {LAB_REVIEW_RESERVED} Les valeurs proposées restent hors du dossier et des courbes tant qu’il ne les a pas confirmées.
             </Notice>
           )}
-          {candidates.length === 0 ? (
+          {!valuesShared ? (
+            <EmptyState
+              icon="lock"
+              title="Valeurs extraites non partagées"
+              description="Le PDF source reste consultable. Les valeurs proposées et confirmées de ce document ne sont pas partagées avec ce compte : rien n’indique ici un échec d’extraction."
+            />
+          ) : candidates.length === 0 ? (
             <EmptyState
               icon="inbox"
               title="Aucune valeur proposée pour ce document"

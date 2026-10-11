@@ -2,6 +2,7 @@
 
 import { useId, useRef, useState, type FormEvent } from "react";
 import { Button, Field, Notice, SegmentedControl, TextArea, describedBy } from "@/components/ui";
+import { UNKNOWN_LANGUAGE_TEXT } from "@/components/layout/source-language";
 import { runFenced, type AccessFence } from "@/lib/client/access-fence";
 import { sendMessage, type CareMessage, type MessageInput } from "@/lib/client/care-api";
 import { createClientId } from "@/lib/client/ids";
@@ -76,7 +77,9 @@ export function MessageComposer({ patientId, actorId, fence, onSent }: MessageCo
   return (
     <form className={styles.composer} onSubmit={(event) => void submit(event)} noValidate>
       <Field label="Votre message" htmlFor={textId} hint={hint} error={error} required>
+        {/* What the clinician types may be Arabic or French: never forced to the panel's fr/ltr. */}
         <TextArea
+          {...UNKNOWN_LANGUAGE_TEXT}
           id={textId}
           value={text}
           rows={4}

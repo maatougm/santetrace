@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { Button, Field, Notice, TextArea, describedBy } from "@/components/ui";
+import { UNKNOWN_LANGUAGE_TEXT } from "@/components/layout/source-language";
 import { UNGUARDED_MUTATIONS, type MutationGuard } from "@/lib/client/access-fence";
 import { updateAlert, type Alert, type AlertAction } from "@/lib/client/api";
 import { errorText } from "../shared/ApiErrorState";
@@ -130,6 +131,7 @@ export function AlertActions({ alert, onUpdated, focusAfterId, guard = UNGUARDED
 
       <Field label="Note de suivi" htmlFor={noteId} hint={hint} error={noteError}>
         <TextArea
+          {...UNKNOWN_LANGUAGE_TEXT}
           id={noteId}
           value={note}
           rows={3}

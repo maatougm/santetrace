@@ -143,6 +143,22 @@
   gap: var(--space-2);
 }
 
+/* Each link fills its row height, so wrapped and one-line links in a row match. */
+.links > li {
+  display: flex;
+}
+
+/*
+ * Section names wrap instead of being cut ("Partager avec un m…"): the shared
+ * button is nowrap with an ellipsis label. Element + class beats `.button` by
+ * specificity, never by stylesheet order. One line stays 44px tall.
+ */
+.links > li > a {
+  padding-block: var(--space-2);
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
 .form {
   display: flex;
   flex-direction: column;

@@ -1,0 +1,201 @@
+/*
+ * Record section navigation. One component, two presentations of the same
+ * state: below 768px a single labelled native select and a jump to the section
+ * already chosen; from 768px four frequent
+ * destinations and an "Autres sections" select. The inactive presentation is
+ * display:none, so it is out of the layout, the tab order and the a11y tree.
+ */
+.nav {
+  min-width: 0;
+}
+
+/* Phone */
+
+.phone {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-ink);
+}
+
+/* "Aller à …": secondary-button look; the label wraps rather than clips. */
+.jump {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  max-width: 100%;
+  min-height: var(--touch-min);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-4);
+  background: var(--color-surface-raised);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-accent);
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: break-word;
+  cursor: pointer;
+}
+
+.jump:hover {
+  background: var(--color-accent-wash);
+  border-color: var(--color-accent-strong);
+  color: var(--color-accent-strong);
+}
+
+.jump:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+.desktop {
+  display: none;
+}
+
+/* Desktop */
+
+@media (min-width: 768px) {
+  .phone {
+    display: none;
+  }
+
+  .desktop {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+    min-width: 0;
+    border-block-end: 1px solid var(--color-line);
+  }
+}
+
+.frequent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--color-ink-2);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+/* Current marker: the same 4px accent bar the tab list used. */
+.link::after {
+  content: "";
+  position: absolute;
+  inset-inline: var(--space-2);
+  inset-block-end: 0;
+  height: 4px;
+  background: transparent;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.link:hover {
+  color: var(--color-ink);
+  background: var(--color-hover);
+}
+
+.link:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.link[aria-current="true"] {
+  color: var(--color-ink);
+}
+
+.link[aria-current="true"]::after {
+  background: var(--color-accent);
+}
+
+.count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.375rem;
+  height: 1.25rem;
+  padding-inline: var(--space-1-5);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-sunken);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.link[aria-current="true"] .count {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+}
+
+/* "Autres sections" */
+
+.more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  min-width: 0;
+  padding-block-end: var(--space-2);
+}
+
+.moreLabel {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-2);
+}
+
+.more .moreControl {
+  width: auto;
+  min-width: 14rem;
+  max-width: 100%;
+}
+
+/* A secondary section is current: the select is named, blue and bold, never looks inactive. */
+.more[data-current="true"] .moreLabel {
+  color: var(--color-ink);
+}
+
+.more[data-current="true"] .moreControl {
+  border-color: var(--color-accent);
+  background: var(--color-accent-wash);
+}
+
+.more[data-current="true"] select {
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}

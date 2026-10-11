@@ -1,7 +1,11 @@
 "use client";
 
 import { Button, Icon, Notice } from "@/components/ui";
-import { describeApiError, type ApiError } from "@/lib/client/api";
+import { useClinicianLanguage } from "@/components/layout/ClinicianLanguage";
+import { describeApiError, type ApiError, type Language } from "@/lib/client/api";
+import { directionFor } from "@/lib/client/document-language";
+import { FRESHNESS_COPY, freshnessAge } from "../dashboard/dashboard-copy";
+import { selectedLanguageRoot } from "./ApiErrorState";
 import { useNow } from "./hooks";
 import { TIME_ZONE } from "./time";
 import styles from "./SyncStatus.module.css";
@@ -10,43 +14,47 @@ interface SyncStatusProps {
   lastSuccessAt: number | null;
   error: ApiError | null;
   isRefreshing: boolean;
+  /** Defaults to the clinician shell language (French outside the shell). */
+  lang?: Language;
 }
 
-const clockFormatter = new Intl.DateTimeFormat("fr-FR", {
+const CLOCK_OPTIONS: Intl.DateTimeFormatOptions = {
   hour: "2-digit",
   minute: "2-digit",
   second: "2-digit",
   timeZone: TIME_ZONE,
-});
+};
 
-function clock(ms: number): string {
-  return clockFormatter.format(ms);
-}
+/** Latin digits in both languages, as in the UI kit Timestamp. */
+const clockFormatters: Readonly<Record<Language, Intl.DateTimeFormat>> = {
+  fr: new Intl.DateTimeFormat("fr-FR", CLOCK_OPTIONS),
+  ar: new Intl.DateTimeFormat("ar-TN-u-nu-latn", CLOCK_OPTIONS),
+};
 
-function ageLabel(lastSuccessAt: number, now: number): string {
-  const seconds = Math.max(0, Math.round((now - lastSuccessAt) / 1000));
-  if (seconds < 60) return `il y a ${seconds} s`;
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `il y a ${minutes} min`;
-  return `à ${clock(lastSuccessAt)}`;
+function clockFor(lang: Language): (ms: number) => string {
+  return (ms) => clockFormatters[lang].format(ms);
 }
 
 /** Compact "mis à jour il y a X s" chip for page headers. Not a live region on purpose. */
-export function SyncStatus({ lastSuccessAt, error, isRefreshing }: SyncStatusProps) {
+export function SyncStatus({ lastSuccessAt, error, isRefreshing, lang }: SyncStatusProps) {
+  const shell = useClinicianLanguage();
+  const language = lang ?? shell.lang;
+  const copy = FRESHNESS_COPY[language];
   const now = useNow(1_000);
   const stale = Boolean(error);
   return (
-    <p className={stale ? `${styles.chip} ${styles.stale}` : styles.chip}>
+    // Declares its own language/direction, even inside a known-French island.
+    <p className={stale ? `${styles.chip} ${styles.stale}` : styles.chip} lang={language} dir={directionFor(language)}>
       <span className={styles.dot} aria-hidden="true" data-refreshing={isRefreshing || undefined} />
       {lastSuccessAt === null ? (
-        <span>Synchronisation…</span>
+        <span>{copy.syncing}</span>
       ) : (
         <span>
-          {stale ? "Dernière mise à jour " : "Mis à jour "}
-          <span className={styles.age}>{ageLabel(lastSuccessAt, now)}</span>
+          {stale ? copy.lastUpdated : copy.updated}{" "}
+          <span className={styles.age}>{freshnessAge(lastSuccessAt, now, language, clockFor(language))}</span>
         </span>
       )}
-      {stale ? <Icon name="cloud-off" size={14} title="Synchronisation interrompue" /> : null}
+      {stale ? <Icon name="cloud-off" size={14} title={copy.interrupted} /> : null}
     </p>
   );
 }
@@ -56,27 +64,35 @@ interface StaleNoticeProps {
   lastSuccessAt: number | null;
   onRetry: () => void;
   isRefreshing: boolean;
+  /** Defaults to the clinician shell language (French outside the shell). */
+  lang?: Language;
 }
 
 /** Visible banner when polling fails while previous data stays on screen. */
-export function StaleNotice({ error, lastSuccessAt, onRetry, isRefreshing }: StaleNoticeProps) {
+export function StaleNotice({ error, lastSuccessAt, onRetry, isRefreshing, lang }: StaleNoticeProps) {
+  const shell = useClinicianLanguage();
   if (!error || lastSuccessAt === null) return null;
-  const description = describeApiError(error, "fr");
-  const since = clock(lastSuccessAt);
+  const language = lang ?? shell.lang;
+  const copy = FRESHNESS_COPY[language];
+  const description = describeApiError(error, language);
   return (
-    <Notice
-      tone="info"
-      icon={error.isOffline ? "wifi-off" : "cloud-off"}
-      role="status"
-      title={`Données affichées du ${since} — possiblement périmées`}
-      action={
-        <Button size="sm" variant="secondary" iconStart="refresh" onClick={onRetry} loading={isRefreshing}>
-          Réessayer
-        </Button>
-      }
-    >
-      {description.title} : {description.message} Les nouvelles mesures et alertes n’apparaissent pas tant que la
-      synchronisation est interrompue.
-    </Notice>
+    // Notice takes no lang/dir: a box-less root declares them (no extra layout box or role).
+    <div {...selectedLanguageRoot(language)}>
+      <Notice
+        tone="info"
+        icon={error.isOffline ? "wifi-off" : "cloud-off"}
+        role="status"
+        title={copy.staleTitle(clockFor(language)(lastSuccessAt))}
+        action={
+          <Button size="sm" variant="secondary" iconStart="refresh" onClick={onRetry} loading={isRefreshing}>
+            {copy.retry}
+          </Button>
+        }
+      >
+        {description.title}
+        {copy.labelSeparator}
+        {description.message} {copy.staleBody}
+      </Notice>
+    </div>
   );
 }

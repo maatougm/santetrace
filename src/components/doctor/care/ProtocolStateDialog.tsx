@@ -2,6 +2,7 @@
 
 import { useId, useState, type FormEvent } from "react";
 import { Button, Dialog, Field, Notice, TextArea, describedBy } from "@/components/ui";
+import { UNKNOWN_LANGUAGE_TEXT } from "@/components/layout/source-language";
 import type { ProtocolStateInput, ReusableProtocol } from "@/contracts/monitoring";
 import { runFenced, type AccessFence } from "@/lib/client/access-fence";
 import { PROTOCOL_FORM_LIMITS, setProtocolState } from "@/lib/client/assist-api";
@@ -102,6 +103,7 @@ export function ProtocolStateDialog({ target, fence, onClose, onOutcome }: Proto
       <form id={formId} className={styles.form} onSubmit={(event) => void submit(event)} noValidate>
         <Field label="Motif" htmlFor={reasonId} error={error} required>
           <TextArea
+            {...UNKNOWN_LANGUAGE_TEXT}
             id={reasonId}
             rows={3}
             maxLength={PROTOCOL_FORM_LIMITS.reasonMax}

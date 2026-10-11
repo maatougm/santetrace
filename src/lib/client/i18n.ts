@@ -220,8 +220,9 @@ const fr = {
     },
   },
   reminders: {
-    title: "Rappels de traitement",
-    intro: "Indiquez si vous avez pris votre traitement. Une déclaration ne peut plus être modifiée ensuite.",
+    title: "Mes rappels",
+    intro:
+      "Consultez les actions prévues dans votre plan. Pour un rappel de médicament, vous pouvez déclarer une prise ; cette déclaration ne peut plus être modifiée ensuite.",
     upcoming: "À venir",
     past: "Passés",
     empty: "Aucun rappel programmé par votre équipe soignante.",
@@ -243,6 +244,7 @@ const fr = {
     reportedOn: "Déclaré le",
     serverReceived: "Reçu par le serveur",
     localPending: "Déclaré sur cet appareil — pas encore envoyé",
+    noStorage: "La connexion a échoué et cet appareil ne peut pas garder votre déclaration. Réessayez une fois en ligne.",
     offlineList: "Liste enregistrée sur cet appareil ; elle a pu changer depuis.",
     unavailable: "Rappels indisponibles : hors ligne et sans copie sur cet appareil.",
   },
@@ -546,8 +548,8 @@ const ar: Messages = {
     },
   },
   reminders: {
-    title: "تذكيرات العلاج",
-    intro: "صرّح إن كنت قد تناولت علاجك. لا يمكن تعديل التصريح بعد ذلك.",
+    title: "تذكيراتي",
+    intro: "اطّلع على الإجراءات المقرّرة في خطتك. بالنسبة لتذكير بدواء، يمكنك التصريح بتناوله؛ لا يمكن تعديل هذا التصريح بعد ذلك.",
     upcoming: "القادمة",
     past: "السابقة",
     empty: "لم يبرمج فريق الرعاية أي تذكير.",
@@ -569,6 +571,7 @@ const ar: Messages = {
     reportedOn: "تاريخ التصريح",
     serverReceived: "استلمه الخادم",
     localPending: "صُرّح به على هذا الجهاز — لم يُرسل بعد",
+    noStorage: "فشل الاتصال ولا يستطيع هذا الجهاز الاحتفاظ بتصريحك. أعد المحاولة عند الاتصال.",
     offlineList: "قائمة محفوظة على هذا الجهاز، وقد تكون تغيّرت.",
     unavailable: "التذكيرات غير متاحة: لا يوجد اتصال ولا نسخة على هذا الجهاز.",
   },

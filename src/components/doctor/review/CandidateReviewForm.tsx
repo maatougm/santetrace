@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { Button, Checkbox, Field, Notice, SegmentedControl, TextArea, describedBy } from "@/components/ui";
+import { UNKNOWN_LANGUAGE_TEXT } from "@/components/layout/source-language";
 import type { AccessFence } from "@/lib/client/access-fence";
 import { reviewCandidate, type Candidate, type CandidateReviewResponse } from "@/lib/client/api";
 import { DISCARDED_OUTCOME } from "../care/outcome";
@@ -186,6 +187,7 @@ export function CandidateReviewForm({ candidate, fence, onReviewed }: CandidateR
       {mode === "reject" ? (
         <Field label="Motif du rejet" htmlFor={rejectId} hint="Obligatoire. La proposition reste tracée." error={rejectError} required>
           <TextArea
+            {...UNKNOWN_LANGUAGE_TEXT}
             id={rejectId}
             rows={2}
             value={rejectReason}

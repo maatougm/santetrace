@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useState, type FormEvent } from "react";
 import { Button, Dialog, Field, Notice, TextArea, describedBy, errorId } from "@/components/ui";
+import { UNKNOWN_LANGUAGE_TEXT } from "@/components/layout/source-language";
 import type { CareProposal, ReusableProtocol } from "@/contracts/monitoring";
 import { runFenced, type AccessFence } from "@/lib/client/access-fence";
 import type { PatientRecord } from "@/lib/client/api";
@@ -237,6 +238,7 @@ export function ProtocolForm({ session, patientId, record, context, fence, onClo
         {protocol ? (
           <Field label="Motif de la révision" htmlFor={ids.reason} error={errors.reason} required>
             <TextArea
+              {...UNKNOWN_LANGUAGE_TEXT}
               id={ids.reason}
               rows={3}
               maxLength={PROTOCOL_FORM_LIMITS.reasonMax}

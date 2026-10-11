@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { existsSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import test from 'node:test';
 import type { Alert, Measurement, Reminder, Rules, Status } from '../src/contracts/care';
@@ -355,6 +355,95 @@ test('every patient route is reachable within two taps of the tab bar, and highl
   }
   assert.deepEqual([...RECORD_ROUTES].sort(), RECORD_LINKS.map((l) => l.href).sort());
   assert.ok(existsSync(join(process.cwd(), 'src', 'app', 'patient', 'measure', 'devices', 'page.tsx')));
+});
+
+// ---------------------------------------------------------------------------
+// Hierarchy: measure first, then the real result and the latest reading, then
+// the secondary shortcuts (static source checks: no DOM in these tests)
+// ---------------------------------------------------------------------------
+
+const source = (path: string): string => readFileSync(join(process.cwd(), ...path.split('/')), 'utf8');
+
+/** Index of the single occurrence of `needle` in `text`; fails when absent or repeated. */
+function onlyIndex(text: string, needle: string): number {
+  const first = text.indexOf(needle);
+  assert.ok(first >= 0, `${needle} is missing`);
+  assert.equal(text.indexOf(needle, first + 1), -1, `${needle} is rendered more than once`);
+  return first;
+}
+
+test('home order: primary measure action, then LastResult, then LatestReading, then the quick-links list', () => {
+  const home = source('src/components/patient/HomeScreen.tsx');
+  const screen = home.slice(home.indexOf('export function HomeScreen'));
+  const primary = onlyIndex(screen, '<PrimaryAction ');
+  const result = onlyIndex(screen, '<LastResult ');
+  const latest = onlyIndex(screen, '<LatestReading ');
+  const links = onlyIndex(screen, '<HomeQuickLinks ');
+  assert.ok(primary < result, 'the submission result follows the primary action');
+  assert.ok(result < latest, 'the latest reading follows the action and its real result');
+  assert.ok(latest < links, 'the general quick links come after the latest reading');
+  // Prochaine étape is kept, and the status card (safety rows) still precedes the action.
+  assert.ok(onlyIndex(screen, '<HomeNextStep ') > primary);
+  assert.ok(onlyIndex(screen, '<HomeStatusCard ') < primary);
+  assert.ok(onlyIndex(screen, '<RedEpisode ') < primary);
+  assert.ok(onlyIndex(screen, '<NoReferentNotice ') < primary);
+});
+
+test('one primary action: "Ajouter une mesure", full width, large, offline-capable link to the measure screen', () => {
+  const home = source('src/components/patient/HomeScreen.tsx');
+  const action = home.slice(home.indexOf('function PrimaryAction'), home.indexOf('export function HomeScreen'));
+  assert.match(action, /<LinkButton href="\/patient\/measure" variant="primary" size="lg" fullWidth iconStart="plus">/);
+  assert.match(action, /HOME_COPY\[lang\]\.addMeasure/);
+  assert.equal(HOME_COPY.fr.addMeasure, 'Ajouter une mesure');
+  for (const file of ['HomeScreen.tsx', 'home/HomeQuickLinks.tsx', 'home/LatestReading.tsx', 'home/HomeNextStep.tsx']) {
+    const count = source(`src/components/patient/${file}`).match(/variant="primary"/g)?.length ?? 0;
+    assert.equal(count, file === 'HomeScreen.tsx' ? 1 : 0, `${file} must not add a competing primary action`);
+  }
+  // Next step keeps "Voir mon plan" (or the reminders link) as a secondary action.
+  assert.match(source('src/components/patient/home/HomeNextStep.tsx'), /variant="secondary"/);
+  assert.equal(HOME_COPY.fr.openPlan, 'Voir mon plan');
+});
+
+test('quick links: a labelled compact list with the same four destinations, then the quiet devices link', () => {
+  assert.deepEqual(
+    HOME_QUICK_LINKS.map((link) => link.href),
+    ['/patient/messages', '/patient/plan', '/patient/documents', '/patient/history'],
+  );
+  assert.equal(DEVICES_HREF, '/patient/measure/devices');
+  const links = source('src/components/patient/home/HomeQuickLinks.tsx');
+  assert.match(links, /<nav className=\{css\.links\} aria-labelledby="home-links-title">/);
+  assert.match(links, /<h2 id="home-links-title"/);
+  assert.match(links, /HOME_QUICK_LINKS\.map\(\(link\) =>/);
+  assert.match(links, /<Link href=\{link\.href\}/);
+  const listEnd = onlyIndex(links, '</ul>');
+  assert.ok(onlyIndex(links, 'href={DEVICES_HREF}') > listEnd, 'devices link sits after the list, inside the nav');
+  assert.ok(links.indexOf('</nav>') > listEnd);
+  assert.doesNotMatch(links, /css\.tiles?\b|LinkButton/, 'no 2×2 tiles or button-styled shortcuts');
+  // The devices link moved out of the primary action block.
+  assert.doesNotMatch(source('src/components/patient/HomeScreen.tsx'), /DEVICES_HREF/);
+  const styles = source('src/components/patient/home.module.css');
+  assert.doesNotMatch(styles, /\.tiles?\b/);
+  assert.doesNotMatch(styles, /#[0-9a-f]{3,8}\b/i, 'tokens only, no raw colours');
+  for (const lang of ['fr', 'ar'] as const) {
+    for (const link of HOME_QUICK_LINKS) assert.ok(HOME_COPY[lang].links[link.key].length > 0);
+  }
+});
+
+test('latest reading is open: number with its provenance badges, kind, measured, received and source outside any disclosure', () => {
+  const latest = source('src/components/patient/home/LatestReading.tsx');
+  const main = latest.slice(latest.indexOf('export function LatestReading'));
+  assert.doesNotMatch(main, /<Disclosure/, 'the latest reading itself is never collapsed');
+  assert.match(main, /value=\{latest \? <SummaryReading measurement=\{latest\}/);
+  assert.match(main, /<ReadingKind measurement=\{latest\}/);
+  assert.match(main, /<ReadingDates measurement=\{latest\}/);
+  assert.match(main, /empty=\{t\.home\.latestNone\}/, 'nothing received is said, never shown as zero');
+  const dates = latest.slice(latest.indexOf('function ReadingDates'), latest.indexOf('function PulseDetails'));
+  assert.match(dates, /t\.common\.measuredAt/);
+  assert.match(dates, /t\.common\.receivedAt/);
+  assert.match(dates, /measurementSourceLabel\(measurement\.source/);
+  const summary = latest.slice(latest.indexOf('function SummaryReading'), latest.indexOf('function ReadingKind'));
+  assert.match(summary, /<Reading value=\{measurement\}/);
+  assert.match(summary, /<ProvenanceBadges measurement=\{measurement\}/);
 });
 
 // ---------------------------------------------------------------------------

@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import test from 'node:test';
 import type {
   AiMeta,
@@ -21,6 +23,7 @@ import {
   buildDecisionInput,
   buildEditInput,
   groupProposals,
+  initialEditTemplate,
   proposalReviewGate,
 } from '../src/components/doctor/care/proposal-review';
 import { claimParameterRows, groupClaims, isReportStale, resolveClaimSources } from '../src/components/doctor/care/report-claims';
@@ -135,6 +138,37 @@ test('a draft whose guard differs from the current record guard is stale: no dec
   assert.equal(buildEditInput(proposal(), 'home.glucose', 'motif', 'c', { currentGuard: null }).ok, false);
 });
 
+test('re-examining a stale draft opens with its registered action selected; a current draft or unknown context opens empty', () => {
+  const staleGuard = { ...current, evidenceRevision: 11, proposalRevision: 4 };
+  const stale = proposal({ guard: staleGuard });
+  assert.equal(initialEditTemplate({ mode: 'edit', proposal: stale }, current), 'home.blood_pressure', 'the dialog says the same action can be kept');
+  assert.equal(initialEditTemplate({ mode: 'edit', proposal: proposal() }, current), '', 'current draft: an edit must pick another action');
+  assert.equal(initialEditTemplate({ mode: 'edit', proposal: stale }, null), '', 'record context unknown: nothing preselected');
+  for (const templateId of ['home.insulin_dose', 'unknown']) {
+    const outside = proposal({ guard: staleGuard, action: { templateId, templateVersion: 1, parameters: {} } });
+    assert.equal(initialEditTemplate({ mode: 'edit', proposal: outside }, current), '', `${templateId}: outside the registry, never preselected`);
+  }
+  for (const mode of ['approve', 'reject'] as const) assert.equal(initialEditTemplate({ mode, proposal: stale }, current), '', mode);
+  assert.equal(initialEditTemplate(null, current), '');
+
+  // Preselected is not sent: an explicit reason is still required, and the result is a new revision, not a decision.
+  const seeded = initialEditTemplate({ mode: 'edit', proposal: stale }, current);
+  assert.equal(buildEditInput(stale, seeded, '  ', 'c', at).ok, false);
+  const rebind = buildEditInput(stale, seeded, 'Réexamen sur le dossier actuel', 'c', at);
+  assert.ok(rebind.ok);
+  assert.deepEqual(rebind.input.expectedGuard, current);
+  assert.equal('decision' in rebind.input, false, 'approval stays a separate step');
+  assert.equal(buildDecisionInput(stale, 'approve', 'motif', 'c', at).ok, false, 'the stale draft itself still cannot be approved');
+});
+
+test('static: the review dialog seeds its action only through initialEditTemplate when a new target opens', () => {
+  const dialog = readFileSync(join(process.cwd(), 'src', 'components', 'doctor', 'care', 'ProposalReviewDialog.tsx'), 'utf8');
+  const reset = dialog.slice(dialog.indexOf('if (key !== formKey) {'), dialog.indexOf('const showError'));
+  assert.match(reset, /setTemplate\(initialEditTemplate\(target, currentGuard\)\);/);
+  assert.doesNotMatch(reset, /setTemplate\(""\)/, 'no unconditional empty selection on opening');
+  assert.match(reset, /setReason\(""\);/, 'the reason still starts empty');
+});
+
 test('decided proposals and non-managing clinicians get no review controls', () => {
   for (const state of ['approved', 'rejected', 'expired'] as const) {
     const gate = proposalReviewGate(proposal({ state }), manager);
@@ -208,14 +242,109 @@ test('claim sources resolve only to ids present in the report; unknown ids are r
   assert.deepEqual(resolveClaimSources(claim('missing'), sources), { found: [], missingIds: [] });
 });
 
-test('claim parameters become plain text pairs; polarity uses the shared vocabulary', () => {
+test('claim parameters become plain text rows; polarity uses the shared vocabulary', () => {
   const rows = claimParameterRows({ polarity: 'unknown', count: 2, flagged: true, note: '<b>x</b>' });
   assert.deepEqual(rows, [
-    { key: 'polarity', value: 'Je ne sais pas' },
-    { key: 'count', value: '2' },
-    { key: 'flagged', value: 'Oui' },
-    { key: 'note', value: '<b>x</b>' },
+    { key: 'polarity', label: 'Réponse', value: 'Je ne sais pas' },
+    { key: 'count', label: 'count', value: '2' },
+    { key: 'flagged', label: 'flagged', value: 'Oui' },
+    { key: 'note', label: 'Note', value: '<b>x</b>' },
   ]);
+});
+
+const shown = (rows: { key: string; label: string; value: string }[]) => rows.map((row) => [row.label, row.value]);
+
+test('report rows name each parameter in French and registry tokens by their display names; dates use the clinician format', () => {
+  const pressure = claimParameterRows({ kind: 'blood_pressure', unit: 'mmHg', measuredAt: '2026-10-10T08:00:00.000Z', systolic: 142, diastolic: 91 });
+  assert.deepEqual(pressure.map((row) => row.key), ['kind', 'unit', 'measuredAt', 'systolic', 'diastolic'], 'stable keys, server order');
+  assert.deepEqual(shown(pressure).filter(([label]) => label !== 'Mesurée le'), [
+    ['Type de mesure', 'Tension artérielle'],
+    ['Unité', 'mmHg'],
+    ['Systolique', '142'],
+    ['Diastolique', '91'],
+  ]);
+  assert.match(pressure[2].value, /^10 oct\. 2026\D+09:00$/, 'Africa/Tunis clinician time, not the raw ISO string');
+
+  assert.deepEqual(shown(claimParameterRows({ polarity: 'affirmed', label: 'hypertension', code: 'hypertension' })), [
+    ['Réponse', 'Oui'],
+    ['Libellé', 'Hypertension artérielle'],
+    ['Code du registre', 'Hypertension artérielle'],
+  ]);
+  assert.deepEqual(shown(claimParameterRows({ polarity: 'negated', label: 'declared', code: 'declared', value: 'Pénicilline' })), [
+    ['Réponse', 'Non'],
+    ['Libellé', 'Déclaré par le patient'],
+    ['Code du registre', 'Déclaré par le patient'],
+    ['Valeur', 'Pénicilline'],
+  ]);
+  assert.deepEqual(shown(claimParameterRows({ verification: 'external_unverified', note: 'Suivi hypertension, declared' })), [
+    ['Vérification', 'Note externe non vérifiée'],
+    ['Note', 'Suivi hypertension, declared'],
+  ], 'free text is never rewritten, even when it contains registry words');
+  const lab = claimParameterRows({ date: '2026-10-01', exam: 'HbA1c', value: '7,2', unit: '%' });
+  assert.deepEqual(shown(lab).slice(1), [['Examen', 'HbA1c'], ['Valeur', '7,2'], ['Unité', '%']]);
+  assert.match(lab[0].value, /^1 oct\. 2026$/);
+  assert.equal(lab[0].label, 'Date');
+});
+
+test('report rows keep exact numbers and units, zeros and false, and show unknown keys, values and invalid dates as given', () => {
+  assert.deepEqual(shown(claimParameterRows({ kind: 'glucose', unit: 'mmol/L', value: 7.25 })), [
+    ['Type de mesure', 'Glycémie'],
+    ['Unité', 'mmol/L'],
+    ['Valeur', '7.25'],
+  ], 'no rounding, no unit conversion');
+  assert.deepEqual(shown(claimParameterRows({ systolic: 0, value: 0.1, flagged: false })), [
+    ['Systolique', '0'],
+    ['Valeur', '0.1'],
+    ['flagged', 'Non'],
+  ]);
+
+  const odd = claimParameterRows({
+    kind: 'weight',
+    polarity: 'maybe',
+    verification: 'peer_reviewed',
+    code: 'asthma',
+    label: 'hypertension',
+    measuredAt: 'not-a-date',
+    date: '10/01/2026',
+    referenceVersion: 1,
+    toString: 'x',
+  });
+  assert.equal(odd.length, 9, 'nothing dropped');
+  assert.deepEqual(shown(odd), [
+    ['Type', 'weight'],
+    ['Réponse', 'maybe'],
+    ['Vérification', 'peer_reviewed'],
+    ['Code du registre', 'asthma'],
+    ['Libellé', 'hypertension'],
+    ['Mesurée le', 'not-a-date'],
+    ['Date', '10/01/2026'],
+    ['Version de référence', '1'],
+    ['toString', 'x'],
+  ]);
+  assert.deepEqual(shown(claimParameterRows({ measuredAt: '2026-02-31T08:00:00Z', date: 1760083200000 })), [
+    ['Mesurée le', '2026-02-31T08:00:00Z'],
+    ['Date', '1760083200000'],
+  ], 'an impossible or non-ISO date is shown literally, never a guessed one');
+  assert.match(claimParameterRows({ measuredAt: '2026-10-10' })[0].value, /^10 oct\. 2026$/, 'a date without a time gets no invented hour');
+  assert.match(claimParameterRows({ date: '2026-10-01T23:30:00Z' })[0].value, /^2 oct\. 2026\D+00:30$/, 'a timed value keeps its time, so the clinic-zone day shift is visible');
+});
+
+test('the server hypothesis label key reads as its existing French wording; any other label key stays as sent', () => {
+  // Exact server shape of every hypothesis_review claim (medical-evidence renderGroundedClaims).
+  const hypothesis = claimParameterRows({ labelKey: 'hypothesis.review_required', referenceVersion: 1 });
+  assert.deepEqual(hypothesis.map((row) => row.key), ['labelKey', 'referenceVersion'], 'stable keys, server order');
+  assert.deepEqual(shown(hypothesis), [
+    ['Libellé du registre', CARE_COPY.fr.claimCode.hypothesis_review],
+    ['Version de référence', '1'],
+  ]);
+  assert.equal(CARE_COPY.fr.claimCode.hypothesis_review, 'Piste à examiner par le médecin', 'existing copy, not new wording');
+  assert.ok(hypothesis.every((row) => !row.value.includes('hypothesis.review_required')), 'the raw registry token is no longer displayed');
+
+  for (const unknown of ['hypothesis.other', 'Hypothesis.Review_Required', 'review_required', 'toString', 'constructor', '']) {
+    assert.deepEqual(shown(claimParameterRows({ labelKey: unknown })), [['Libellé du registre', unknown]], `unknown label key ${JSON.stringify(unknown)} kept verbatim`);
+  }
+  // The mapping is keyed by the parameter name: the same token under another key is not rewritten.
+  assert.deepEqual(shown(claimParameterRows({ note: 'hypothesis.review_required' })), [['Note', 'hypothesis.review_required']]);
 });
 
 test('a report is stale when the report or its meta says so', () => {
