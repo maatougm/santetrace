@@ -1,0 +1,32 @@
+.spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+  line-height: 0;
+}
+
+.svg {
+  animation: spin 0.8s linear infinite;
+}
+
+.track {
+  opacity: 0.2;
+}
+
+.arc {
+  stroke-dasharray: 42 100;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Activity indicators are essential motion: keep them, but slow and gentle. */
+@media (prefers-reduced-motion: reduce) {
+  .svg {
+    animation-duration: 2.4s;
+  }
+}

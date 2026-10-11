@@ -1,0 +1,16 @@
+{
+  "ssid": "YOUR_WIFI_NAME",
+  "password": "YOUR_WIFI_PASSWORD",
+  "endpoint": "https://YOUR_HTTPS_HOST/api/connectors/events",
+  "credential": "PASTE_THE_ONE_TIME_DEVICE_CONNECTOR_TOKEN",
+  "meterIdentity": "meter-serial-from-patient-device-binding",
+  "bleAddress": "00:00:00:00:00:00",
+  "addressType": 0,
+  "passkey": 123456,
+  "epoch": "1",
+  "firstSequence": 0,
+  "meterHistoryBelongsToPatient": false,
+  "utcOffsetMinutes": 60,
+  "clockVerified": false,
+  "caPem": "-----BEGIN CERTIFICATE-----\nPASTE_TRUSTED_CA_FOR_YOUR_HTTPS_HOST\n-----END CERTIFICATE-----\n"
+}

@@ -1,0 +1,6 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { projectPatientRecord, requirePatientCapability } from "../src/lib/patient-access-service";
+import { fixtureStore, testOwner, testDoctor } from "./helpers/care-fixture";
+test("status-only projection excludes all clinical sections and composite summaries",()=>{const s=fixtureStore();try{s.transaction(st=>{st.careGrants[0].scopes=["status"];});const p=projectPatientRecord(s.read(),testDoctor,"fatma");assert.equal(p.patient.rules,null);for(const key of ["measurements","documents","observations","candidates","medicalFacts","actions","proposals","evaluations"] as const)assert.deepEqual(p[key],[]);assert.equal(p.plan,null);assert.throws(()=>requirePatientCapability(s.read(),testDoctor,"fatma","summary"));assert.throws(()=>requirePatientCapability(s.read(),testDoctor,"fatma","manage"));}finally{s.close();}});
+test("owner retains record after processing withdrawal while capture capability is denied",()=>{const s=fixtureStore();try{s.transaction(st=>{st.patients[0].consent=false;});assert.equal(projectPatientRecord(s.read(),testOwner,"fatma").patient.id,"fatma");assert.throws(()=>requirePatientCapability(s.read(),testOwner,"fatma","measurements"));assert.throws(()=>projectPatientRecord(s.read(),testDoctor,"fatma"));}finally{s.close();}});

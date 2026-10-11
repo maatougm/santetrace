@@ -1,0 +1,414 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  width: 100%;
+  min-width: 0;
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.sectionStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.panel {
+  min-width: 0;
+}
+
+.panel:focus {
+  outline: none;
+}
+
+.panel:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: 4px;
+  border-radius: var(--radius-md);
+}
+
+/* The tab list scrolls inside its own box on phones; the page never does. */
+.tabsBar {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  scroll-margin-block-start: var(--space-4);
+}
+
+.groupTitle {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+.subTitle {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+
+.chartGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+@media (min-width: 1400px) {
+  .chartGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.flushCard {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+
+.value {
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.strongText {
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+
+.cellStack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-ink-2);
+  overflow-wrap: anywhere;
+}
+
+.muted {
+  color: var(--color-ink-3);
+  font-size: var(--text-sm);
+}
+
+.mutedBlock {
+  margin: 0;
+  color: var(--color-ink-3);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.clockWarning {
+  display: inline-block;
+  max-width: 16rem;
+  font-size: var(--text-xs);
+  color: var(--color-info);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Forms */
+
+.inlineForm {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) auto;
+  align-items: start;
+  gap: var(--space-4);
+}
+
+.formSubmit {
+  padding-top: 1.75rem;
+}
+
+@media (max-width: 760px) {
+  .inlineForm {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .formSubmit {
+    padding-top: 0;
+  }
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.versionLine {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.rulesForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.rulesRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: var(--space-4) 0 0;
+  border: 0;
+  border-top: 1px solid var(--color-line-subtle);
+  min-width: 0;
+}
+
+.rulesLegend {
+  float: left;
+  width: 100%;
+  margin-bottom: var(--space-1);
+  padding: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+
+.rulesLegend + * {
+  clear: both;
+}
+
+@media (max-width: 719.98px) {
+  .rulesRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.unitField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fieldLabel {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+
+.uploadForm {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-4);
+}
+
+@media (max-width: 760px) {
+  .uploadForm {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.fileInput {
+  width: 100%;
+  min-height: var(--control-h-md);
+  padding: var(--space-2);
+  border: 1px dashed var(--color-line-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--color-ink-2);
+}
+
+.fileInput::file-selector-button {
+  margin-inline-end: var(--space-3);
+  padding: var(--space-1-5) var(--space-3);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+  font: inherit;
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.fileInput:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+.fileInput[aria-invalid="true"] {
+  border-color: var(--color-error);
+}
+
+.confirmBox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+}
+
+.confirmText {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+}
+
+/* Summary */
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.summaryFlag {
+  margin: 0;
+}
+
+.summaryText {
+  margin: 0;
+  padding: var(--space-4) var(--space-5);
+  border-inline-start: 3px solid var(--color-accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: var(--color-accent-wash);
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.facts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.fact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-line-subtle);
+  font-size: var(--text-sm);
+}
+
+.fact a {
+  color: var(--color-accent-strong);
+  font-weight: var(--weight-medium);
+}
+
+.factKind {
+  min-width: 9rem;
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-2);
+}
+
+@media (max-width: 519.98px) {
+  .summaryText {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .factKind {
+    min-width: 0;
+    flex-basis: 100%;
+  }
+}
+
+/* Access granted by the patient (feature 006): role, scopes, read-only note. Sits inside the Situation card. */
+.accessStrip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  min-width: 0;
+  font-size: var(--text-sm);
+}
+
+.accessRole {
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+
+.accessRevision {
+  font-weight: var(--weight-regular);
+  color: var(--color-ink-3);
+}
+
+.accessScopes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1-5);
+}
+
+.accessNote {
+  color: var(--color-ink-3);
+}
+
+/* External practitioner notes (append-only, unverified). */
+.externalNote {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-line-subtle);
+}
+
+.externalNoteHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.externalNoteText {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--color-ink-2);
+}
+
+.externalNoteMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-ink-3);
+}

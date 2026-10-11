@@ -1,0 +1,101 @@
+.root {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-height: var(--touch-min);
+  padding-block: var(--space-2-5);
+  cursor: pointer;
+  color: var(--color-ink);
+}
+
+.root:has(:disabled) {
+  cursor: not-allowed;
+  color: var(--color-ink-3);
+}
+
+.boxWrap {
+  position: relative;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-block-start: 0.0625rem;
+}
+
+.input {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  background: var(--color-surface-raised);
+  border: 1.5px solid var(--color-ink-4);
+  border-radius: var(--radius-xs);
+  cursor: inherit;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.root:hover .input:not(:disabled) {
+  border-color: var(--color-ink-2);
+}
+
+.input:checked {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.input:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+.input:disabled {
+  background: var(--color-surface-muted);
+  border-color: var(--color-line-strong);
+}
+
+.input:checked:disabled {
+  background: var(--color-ink-4);
+  border-color: var(--color-ink-4);
+}
+
+.input[aria-invalid="true"]:not(:checked) {
+  border-color: var(--color-error);
+}
+
+.check {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  color: var(--color-accent-ink);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.input:checked + .check {
+  opacity: 1;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+}
+
+.description {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-3);
+}

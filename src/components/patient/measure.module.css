@@ -1,0 +1,288 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.blockLabel {
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-ink-3);
+}
+
+/* ---------- Step indicator ---------- */
+
+.steps {
+  list-style: none;
+  margin: calc(-1 * var(--space-2)) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  padding-top: var(--space-2);
+  border-top: 3px solid var(--color-line);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-3);
+  min-width: 0;
+}
+
+.stepDone {
+  border-top-color: var(--color-accent-soft);
+  color: var(--color-ink-2);
+}
+
+.stepCurrent {
+  border-top-color: var(--color-accent);
+  color: var(--color-accent-strong);
+}
+
+.stepNumber {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-line);
+  font-family: var(--font-numeric);
+  font-size: var(--text-2xs);
+}
+
+.stepCurrent .stepNumber {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+/* ---------- Big numeric inputs ---------- */
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.bigInput {
+  min-height: 4rem;
+}
+
+.bigInput input {
+  min-height: calc(4rem - 2px);
+  font-family: var(--font-numeric);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* ---------- Glucose unit choice (explicit, no default) ---------- */
+
+.unitFieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.unitGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.unitCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: var(--space-2);
+  row-gap: 2px;
+  align-items: center;
+  min-height: 4rem;
+  padding: var(--space-3) var(--space-4);
+  border: 1.5px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.unitCard:hover {
+  border-color: var(--color-ink-4);
+}
+
+.unitCard:has(.unitRadio:focus-visible) {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+.unitCardOn {
+  border-color: var(--color-accent);
+  background: var(--color-accent-wash);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.unitRadio {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.unitDot {
+  grid-row: 1 / span 2;
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 2px solid var(--color-line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+}
+
+.unitCardOn .unitDot {
+  border-color: var(--color-accent);
+  background: radial-gradient(circle, var(--color-accent) 0 45%, var(--color-surface) 50%);
+}
+
+.unitName {
+  font-family: var(--font-numeric);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+  justify-self: start;
+}
+
+.unitExample {
+  font-size: var(--text-xs);
+  color: var(--color-ink-3);
+}
+
+.fieldError {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-error);
+}
+
+/* ---------- Time ---------- */
+
+.timeRow {
+  display: flex;
+  gap: var(--space-2);
+  align-items: stretch;
+}
+
+.timeInput {
+  flex: 1;
+}
+
+/* ---------- Preview ---------- */
+
+.previewSlip {
+  gap: var(--space-2);
+}
+
+.previewTitle {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+
+.previewTitle:focus {
+  outline: none;
+}
+
+.previewList {
+  margin: var(--space-2) 0 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.previewRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+  border-bottom: 1px dashed var(--color-line);
+}
+
+.previewRow dt {
+  font-size: var(--text-sm);
+  color: var(--color-ink-3);
+}
+
+.previewRow dd {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+  text-align: end;
+}
+
+.previewValue {
+  align-items: center;
+}
+
+.previewActions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: var(--space-3);
+}
+
+/* ---------- Result ---------- */
+
+.resultTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.resultActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+@media (max-width: 360px) {
+  .pair,
+  .unitGrid,
+  .previewActions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

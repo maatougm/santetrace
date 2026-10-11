@@ -1,0 +1,10 @@
+import { getCareStore } from "../../../lib/care-store";
+import { createCareHandler } from "../../../lib/monitoring-http";
+export const runtime="nodejs";
+export const dynamic="force-dynamic";
+const handle=(request:Request)=>createCareHandler(getCareStore())(request);
+export const GET=handle;
+export const HEAD=handle;
+export const POST=handle;
+export const PATCH=handle;
+export const DELETE=handle;

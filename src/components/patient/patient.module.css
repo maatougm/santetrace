@@ -1,0 +1,332 @@
+/*
+ * Shared patient-app styles. Tokens only (src/components/ui/tokens.css).
+ * Visual rule: server data sits on solid paper cards; anything that exists
+ * only on this device is a dashed, hatched "slip".
+ */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.stackSm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Sections ---------- */
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-ink);
+}
+
+.plainList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.inlineActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dialogActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+/* ---------- Text ---------- */
+
+.metaLine {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-3);
+}
+
+.metaCenter {
+  margin: 0;
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-3);
+  text-align: center;
+}
+
+.emptyLine {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-3);
+}
+
+.kindLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-2);
+}
+
+.required {
+  color: var(--color-error);
+}
+
+/* Fixed server message (patientMessage.text): quoted, never decorated. */
+.serverMessage {
+  margin: 0;
+  padding-inline-start: var(--space-3);
+  border-inline-start: 2px solid var(--color-line-strong);
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink);
+}
+
+.noticeLine,
+.noticeStrong,
+.noticeMeta {
+  margin: 0;
+  line-height: var(--leading-normal);
+}
+
+.noticeLine + .noticeLine,
+.noticeStrong + .noticeLine,
+.noticeLine + .noticeMeta,
+.noticeStrong + .noticeStrong,
+.noticeMeta + .noticeMeta {
+  margin-top: var(--space-1-5);
+}
+
+.noticeStrong {
+  font-weight: var(--weight-semibold);
+}
+
+.noticeMeta {
+  font-size: var(--text-sm);
+  color: var(--color-ink-3);
+}
+
+/* ---------- Readings (value + unit) ---------- */
+
+.ltr {
+  unicode-bidi: isolate;
+  white-space: nowrap;
+}
+
+.reading {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1-5);
+  white-space: nowrap;
+  color: var(--color-ink);
+}
+
+.readingNumber {
+  font-family: var(--font-numeric);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  letter-spacing: var(--tracking-tight);
+}
+
+.readingUnit {
+  font-family: var(--font-numeric);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-ink-3);
+}
+
+.reading-sm .readingNumber {
+  font-size: var(--text-lg);
+}
+
+.reading-md .readingNumber {
+  font-size: var(--text-2xl);
+}
+
+.reading-lg .readingNumber {
+  font-size: var(--text-4xl);
+  letter-spacing: var(--tracking-display);
+}
+
+.reading-lg .readingUnit {
+  font-size: var(--text-md);
+}
+
+/* ---------- Device-only slips ---------- */
+
+.slip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1.5px dashed var(--color-line-strong);
+  border-radius: var(--radius-md);
+  background:
+    repeating-linear-gradient(-45deg, transparent 0 9px, var(--color-hover) 9px 10px),
+    var(--color-surface);
+}
+
+.slipFailed {
+  border-color: var(--color-error);
+}
+
+.slipHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.slipStub {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--color-ink-3);
+}
+
+.slipBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+}
+
+.slipKind {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-2);
+}
+
+.slipTitle {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+
+.slipError,
+.slipInfo,
+.slipWarning {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.slipError {
+  color: var(--color-error);
+  font-weight: var(--weight-medium);
+}
+
+.slipInfo {
+  color: var(--color-ink-2);
+}
+
+.slipWarning {
+  color: var(--color-ink-2);
+  font-weight: var(--weight-medium);
+}
+
+.slipFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--color-line);
+}
+
+.slipActions {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+/* ---------- Loading ---------- */
+
+.loadingBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+/* ---------- Header language toggle ---------- */
+
+.langToggle {
+  display: inline-grid;
+  place-items: center;
+  min-width: var(--touch-min);
+  height: var(--touch-min);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.langToggle :lang(ar) {
+  font-family: var(--font-arabic);
+  font-size: var(--text-base);
+}
+
+.langToggle:hover {
+  background: var(--color-surface-muted);
+  border-color: var(--color-line-strong);
+}
+
+.langToggle:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}

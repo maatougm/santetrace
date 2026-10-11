@@ -1,0 +1,83 @@
+{
+  "generatedAt": "2026-10-11T07:02:30.194962+00:00",
+  "scope": "SanteTrace standard Bluetooth Glucose Service ESP32 software gateway; physical Contour Next One profile unverified",
+  "build": {
+    "status": "passed",
+    "exitCode": 0,
+    "platformIO": "6.1.18",
+    "platform": "espressif32@6.12.0",
+    "board": "esp32dev",
+    "arduino": "2.0.17",
+    "nimble": "2.3.7",
+    "arduinoJson": "7.4.2",
+    "parallelJobs": 2,
+    "command": ".tools/venv/bin/pio run -j 2",
+    "finalIncrementalSeconds": 6.27,
+    "programBytes": 1273125,
+    "programLimitBytes": 1310720,
+    "staticRamBytes": 56608,
+    "staticRamLimitBytes": 327680,
+    "runtimeMemoryMeasured": false
+  },
+  "filesystemBuild": {
+    "status": "passed",
+    "command": ".tools/venv/bin/pio run -t buildfs -j 2",
+    "seconds": 4.31,
+    "flashed": false
+  },
+  "hostChecks": {
+    "decoderAssertions": 62,
+    "transportSafetyAssertions": 229,
+    "compiler": "Apple clang++",
+    "flags": "-std=c++17 -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined; transport additionally -pthread",
+    "status": "passed",
+    "independentReviewerRerun": "passed"
+  },
+  "codeReview": {
+    "status": "approved final exact source hash by independent reviewer",
+    "fixedFindings": [
+      "New binding cannot inherit old meter ACK: one atomic, verified checkpoint blob.",
+      "Lost BLE frame closes atomic admission, processing, upload and ACK gates; persistent quarantine."
+    ],
+    "report": "../../docs/iot-software-code-review.md"
+  },
+  "securityReview": {
+    "status": "APPROVED",
+    "report": "docs/iot-security-review.md",
+    "scope": "frozen software; physical BLE, hardware and flash security unverified"
+  },
+  "hardware": {
+    "esp32Flashed": false,
+    "bleProfileVerified": false,
+    "physicalMeterConnected": false,
+    "radioPairingTested": false,
+    "physicalWifiRetryTested": false,
+    "publicTlsHostDeployed": false
+  },
+  "sourceSha256": {
+    "platformio.ini": "7deae8c2dbc92d29657e2c44face75c8e507444e3113d7fdc8e516e79edd563d",
+    "src/main.cpp": "55385cb932d2bf65f7474d5dcdbfd91245d9cf8a2c752cfa2acba1e7dd938a7d",
+    "include/glucose_decoder.h": "4b842c629deecacd2832be786e447b0a130c179164eb8eba1088603207be8f20",
+    "include/transport_safety.h": "4446644ab83e97e06dff7224978de8f8c23b7ac97dcdfde87521a6347cbb5d2d",
+    "tests/decoder_test.cpp": "89531805ef97a5658a078a29c09f485cd9f18276cc191ef98991d702bd4fe0d1",
+    "tests/transport_test.cpp": "b706d61a76ecc70fa6bc516a5e0176fed00ac575311516bacd245d876ab70d92",
+    "config.example.json": "f3b0e1a72e0a8cc8c558de0969bb08050806b310eead490f822650720d2e8e7e",
+    "README.md": "37edf52a154b93b6abb12bab159874aa5797aa65485598357dec7de03598c939",
+    ".gitignore": "e262ffa93363db1c342105bc5e4aba1d0fd62c445eea23fe7a4c69acea7b7da9",
+    "data/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "binaries": {
+    ".pio/build/esp32dev/firmware.bin": {
+      "bytes": 1279696,
+      "sha256": "81bc4dd1b0f8ad95e356cccfb1e2f2292ff4dc200420d89e534b13729dddeddc"
+    },
+    ".pio/build/esp32dev/littlefs.bin": {
+      "bytes": 1441792,
+      "sha256": "0d3b2fb0250b24d14ae5ddf2ea5b0b893ff012a1bacb82a028e6e06bae4cfa24"
+    }
+  },
+  "guide": {
+    "path": "../../docs/iot-contour-gateway.md",
+    "sha256": "219f4dab10993289333a6143c01948d890d7bc0ac4aaef1eb36c32e607998230"
+  }
+}

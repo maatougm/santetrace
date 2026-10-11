@@ -1,0 +1,8 @@
+.pio/
+.tools/
+config.local.json
+*.pem
+tests/decoder-test
+tests/transport-test
+build*.log
+provisioned-*.json

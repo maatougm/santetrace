@@ -1,0 +1,36 @@
+{
+  "name": "hackcure",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "next dev --webpack --hostname 127.0.0.1 --port 3001",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1 --port 3001",
+    "test": "tsx --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "monitoring:worker": "node --env-file-if-exists=.env.local --import tsx scripts/monitoring-worker.ts",
+    "dev:live": "node --env-file-if-exists=.env.local --import tsx scripts/live-server.ts",
+    "start:live": "NODE_ENV=production node --env-file-if-exists=.env.local --import tsx scripts/live-server.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
+    "next": "^16.0.0",
+    "pdfjs-dist": "^6.4.299",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^3.10.1",
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/ws": "^8.18.2",
+    "fake-indexeddb": "^6.2.5",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}

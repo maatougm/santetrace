@@ -1,0 +1,124 @@
+.group {
+  --seg-h: 2.25rem;
+  --seg-font: var(--text-sm);
+
+  display: inline-flex;
+  align-items: stretch;
+  gap: 2px;
+  max-width: 100%;
+  padding: 3px;
+  background: var(--color-bg-sunken);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-inset);
+}
+
+/* Segment heights: 26 / 36 / 44 inside a 3px track. md and lg reach a 44px hit area. */
+.sm {
+  --seg-h: 1.625rem;
+  --seg-font: var(--text-xs);
+  border-radius: var(--radius-sm);
+}
+
+.md {
+  --seg-h: 2.25rem;
+}
+
+.lg {
+  --seg-h: 2.75rem;
+  --seg-font: var(--text-base);
+}
+
+.fullWidth {
+  display: flex;
+  width: 100%;
+}
+
+.option {
+  position: relative;
+  flex: 1 1 0;
+  display: flex;
+  min-width: 0;
+}
+
+/* Extend the hit area to the full track height without shifting layout. */
+.md .option::after,
+.lg .option::after {
+  content: "";
+  position: absolute;
+  inset-block: -4px;
+  inset-inline: -1px;
+}
+
+.input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.input:disabled {
+  cursor: not-allowed;
+}
+
+.face {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1-5);
+  min-height: var(--seg-h);
+  min-width: 0;
+  padding-inline: var(--space-3);
+  border-radius: calc(var(--radius-md) - 3px);
+  font-size: var(--seg-font);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--color-ink-3);
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.sm .face {
+  padding-inline: var(--space-2);
+  border-radius: calc(var(--radius-sm) - 3px);
+}
+
+.option:hover .input:not(:disabled, :checked) + .face {
+  color: var(--color-ink);
+  background: var(--color-hover);
+}
+
+.input:checked + .face {
+  background: var(--color-surface-raised);
+  color: var(--color-ink);
+  box-shadow:
+    0 0 0 1px var(--color-line),
+    var(--shadow-1);
+}
+
+.input:focus-visible + .face {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.input:disabled + .face {
+  opacity: 0.45;
+}
+
+.faceIcon {
+  flex: none;
+}
+
+.faceLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

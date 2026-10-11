@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="512" height="512">
+  <title>Santetrace</title>
+  <rect width="32" height="32" fill="#005eb8"/>
+  <g transform="translate(4.8 4.8) scale(0.7)">
+    <path d="M6 17.5h5.2l2.3-6.5 3.6 11 2.6-7.2 1.6 2.7H26" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

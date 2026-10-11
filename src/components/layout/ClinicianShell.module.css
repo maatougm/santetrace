@@ -1,0 +1,265 @@
+.shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+.skip {
+  position: absolute;
+  inset-inline-start: var(--space-4);
+  top: var(--space-3);
+  z-index: var(--z-toast);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-weight: var(--weight-semibold);
+  transform: translateY(-200%);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.skip:focus-visible {
+  transform: translateY(0);
+}
+
+/* ---------- Header band ---------- */
+
+.header {
+  padding-top: env(safe-area-inset-top);
+  background: var(--color-rail);
+  color: var(--color-rail-ink);
+}
+
+.headerInner,
+.demoInner,
+.main {
+  width: min(100%, var(--content-max));
+  margin-inline: auto;
+  padding-inline: clamp(var(--space-4), 3vw, var(--space-8));
+}
+
+.headerInner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0 var(--space-6);
+  min-height: var(--header-height);
+}
+
+.brandLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  color: inherit;
+  text-decoration: none;
+}
+
+/* On blue: yellow focus with a dark bar (NHS header pattern), never the dark ring alone.
+   The brand keeps its blue background (white wordmark 6.4:1) and gets a yellow ring instead,
+   because the nested BrandMark paints its own white wordmark and tile. */
+.brandLink:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus-inverse);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.navLink:focus-visible,
+.logout:focus-visible {
+  outline: none;
+  background: var(--color-focus-halo);
+  color: var(--color-ink);
+  box-shadow: inset 0 -4px 0 var(--color-focus);
+}
+
+.nav {
+  flex: 1 1 auto;
+  min-width: 0;
+  align-self: stretch;
+}
+
+.navList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: 100%;
+  gap: var(--space-1);
+}
+
+.navItem {
+  display: flex;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  padding-inline: var(--space-3);
+  color: var(--color-rail-ink);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.navLink:hover {
+  background: var(--color-rail-hover);
+  color: var(--color-rail-ink);
+  text-decoration: underline;
+}
+
+.navActive {
+  background: var(--color-rail-active);
+  box-shadow: inset 0 -4px 0 var(--color-rail-accent);
+}
+
+.navLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actor {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  margin-inline-start: auto;
+}
+
+.avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--color-rail-ink);
+  color: var(--color-rail);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+
+.actorText {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: var(--leading-tight);
+}
+
+.actorName {
+  max-width: 16rem;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-rail-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actorRole {
+  font-size: var(--text-xs);
+  color: var(--color-rail-ink-2);
+}
+
+.logout {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: 1px solid var(--color-rail-line);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-rail-ink);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.logout:hover {
+  background: var(--color-rail-hover);
+}
+
+.logout:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* ---------- Demo honesty strip ---------- */
+
+.demoStrip {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.demoInner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  padding-block: var(--space-2);
+}
+
+.demoNote {
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  color: var(--color-ink-3);
+}
+
+.live {
+  margin-inline-start: auto;
+}
+
+/* ---------- Main ---------- */
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding-block: var(--space-6) var(--space-12);
+}
+
+.main:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.noticeSlot {
+  margin-block-end: var(--space-5);
+}
+
+/* ---------- Phones / small tablets: nav gets its own full-width row ---------- */
+
+@media (max-width: 720px) {
+  .headerInner {
+    gap: 0 var(--space-3);
+    min-height: 0;
+    padding-block-start: var(--space-2);
+  }
+
+  .nav {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .navItem {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .navLink {
+    flex: 1;
+    justify-content: center;
+    min-height: 48px;
+  }
+
+  .actorText,
+  .avatar {
+    display: none;
+  }
+
+  .main {
+    padding-block: var(--space-5) var(--space-10);
+  }
+}

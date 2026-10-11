@@ -1,0 +1,42 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-ink-3);
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  white-space: nowrap;
+}
+
+.age {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink-2);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-wash);
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.dot[data-refreshing] {
+  opacity: 0.45;
+}
+
+.stale {
+  border-color: var(--color-line-strong);
+  background: var(--color-surface-muted);
+}
+
+.stale .dot {
+  background: var(--color-status-unknown-line);
+  box-shadow: 0 0 0 3px var(--color-status-unknown-soft);
+}

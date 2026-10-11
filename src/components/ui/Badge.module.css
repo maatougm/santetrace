@@ -1,0 +1,131 @@
+.badge {
+  --badge-h: 1.5rem;
+  --badge-px: var(--space-2);
+  --badge-font: var(--text-xs);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--badge-h);
+  max-width: 100%;
+  padding-block: 1px;
+  padding-inline: var(--badge-px);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: var(--badge-font);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: 0;
+  /* Wrap, never truncate: a badge can carry a clinical caveat. */
+  white-space: normal;
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.text {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.glyph {
+  flex: none;
+}
+
+/* Sizes (StatusBadge / PriorityBadge) */
+.sm {
+  --badge-h: 1.375rem;
+  --badge-px: var(--space-1-5);
+  --badge-font: var(--text-2xs);
+}
+
+.md {
+  --badge-h: 1.625rem;
+  --badge-px: var(--space-2);
+  --badge-font: var(--text-xs);
+}
+
+.lg {
+  --badge-h: 2rem;
+  --badge-px: var(--space-3);
+  --badge-font: var(--text-sm);
+  gap: var(--space-1-5);
+  border-radius: var(--radius-md);
+}
+
+/* Generic tones */
+.neutral {
+  background: var(--color-surface-muted);
+  border-color: var(--color-line);
+  color: var(--color-ink-2);
+}
+
+.accent {
+  background: var(--color-accent-wash);
+  border-color: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+}
+
+.muted {
+  background: transparent;
+  color: var(--color-ink-3);
+  padding-inline: 0;
+}
+
+.outline {
+  background: transparent;
+  border-color: var(--color-line-strong);
+  color: var(--color-ink-2);
+}
+
+.orange {
+  background: var(--color-status-orange-soft);
+  border-color: color-mix(in srgb, var(--color-status-orange-mark) 45%, transparent);
+  color: var(--color-status-orange);
+}
+
+.red {
+  background: var(--color-status-red-soft);
+  border-color: color-mix(in srgb, var(--color-status-red-mark) 40%, transparent);
+  color: var(--color-status-red);
+}
+
+/* Care status — green is muted sage, never celebratory. */
+.statusGreen {
+  background: var(--color-status-green-soft);
+  border-color: color-mix(in srgb, var(--color-status-green) 18%, transparent);
+  color: var(--color-status-green);
+}
+
+.statusOrange {
+  background: var(--color-status-orange-soft);
+  border-color: color-mix(in srgb, var(--color-status-orange-mark) 55%, transparent);
+  color: var(--color-status-orange);
+}
+
+.statusRed {
+  background: var(--color-status-red-soft);
+  border-color: color-mix(in srgb, var(--color-status-red-mark) 50%, transparent);
+  color: var(--color-status-red);
+}
+
+/* Unknown = missing data: dashed outline on paper, never a filled "ok" look. */
+.statusUnknown {
+  background: var(--color-surface);
+  border-style: dashed;
+  border-color: var(--color-status-unknown-line);
+  color: var(--color-status-unknown);
+}
+
+/* Priority — red is solid so it outranks every other mark on the page. */
+.priorityOrange {
+  background: var(--color-status-orange-soft);
+  border-color: var(--color-status-orange-mark);
+  color: var(--color-status-orange);
+}
+
+.priorityRed {
+  background: var(--color-status-red);
+  border-color: var(--color-status-red);
+  color: var(--color-ink-inverse);
+}

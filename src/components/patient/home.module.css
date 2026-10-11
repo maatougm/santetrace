@@ -1,0 +1,377 @@
+/*
+ * Simplified patient home. Tokens only, logical properties only (RTL mirrors).
+ * Flat white cards with 1px borders; a dashed border still means "unknown".
+ * Two columns only when the home itself is wide (container query), so the
+ * layout follows whatever width the shell gives the patient main area.
+ */
+
+.home {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.greeting {
+  margin: 0;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+
+.layout,
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+@container (min-width: 720px) {
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: start;
+    gap: var(--space-6);
+  }
+}
+
+/* ---------- Status card ---------- */
+
+.status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--color-line);
+  border-inline-start-width: 6px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.status-green {
+  border-inline-start-color: var(--color-status-green);
+}
+
+.status-orange {
+  border-inline-start-color: var(--color-status-orange-mark);
+}
+
+.status-red {
+  border-inline-start-color: var(--color-status-red-mark);
+}
+
+/* Unknown = missing or unverifiable: dashed, neutral, never reassuring. */
+.status-unknown {
+  border-style: dashed;
+  border-color: var(--color-status-unknown-line);
+  background: var(--color-status-unknown-soft);
+}
+
+.statusTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+  color: var(--color-ink);
+}
+
+.sectionGap {
+  margin-block-end: var(--space-3);
+}
+
+.statusText {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+}
+
+.statusMeta {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-3);
+}
+
+/* ---------- Attention rows (inside the status card) ---------- */
+
+.attention {
+  list-style: none;
+  margin: var(--space-1) 0 0;
+  padding: var(--space-2) 0 0;
+  border-block-start: 1px solid var(--color-line-subtle);
+  display: flex;
+  flex-direction: column;
+}
+
+.attentionRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  padding-block: var(--space-1);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+
+a.attentionRow {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+a.attentionRow:hover {
+  color: var(--color-accent-strong);
+  text-decoration-thickness: 2px;
+}
+
+.attentionRow > span {
+  flex: 1;
+  min-width: 0;
+}
+
+.attentionAction {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+}
+
+.attentionIcon {
+  flex: none;
+  color: var(--color-ink-2);
+}
+
+/* ---------- Primary action ---------- */
+
+.primary {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-1);
+}
+
+/* ---------- Text links (NHS style: underlined accent) ---------- */
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--space-1-5);
+  min-height: var(--touch-min);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.textLink:hover {
+  color: var(--color-accent-strong);
+  text-decoration-thickness: 2px;
+}
+
+.textLink:focus-visible,
+a.attentionRow:focus-visible,
+.tile:focus-visible,
+.summary:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+/* ---------- Next step ---------- */
+
+.next {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--color-line);
+  border-inline-start: 6px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.nextText {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+
+.nextMeta {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-ink-3);
+}
+
+/* ---------- Quick links (2 x 2) ---------- */
+
+.tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.tile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 4rem;
+  height: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-accent);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.tile:hover {
+  border-color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.tileIcon {
+  flex: none;
+}
+
+.tile > span {
+  min-width: 0;
+}
+
+/* ---------- Disclosures ---------- */
+
+.details {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+/* Inside the status card: a hairline instead of a second frame. */
+.detailsInline {
+  border: 0;
+  border-block-start: 1px solid var(--color-line-subtle);
+  border-radius: 0;
+  background: none;
+}
+
+.detailsInline > .summary {
+  padding-inline: 0;
+}
+
+.detailsInline > .detailsBody {
+  padding-inline: 0;
+  padding-block-end: 0;
+  border-block-start: 0;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 3rem;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent);
+  cursor: pointer;
+  list-style: none;
+  border-radius: var(--radius-md);
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary:hover .summaryText {
+  text-decoration: underline;
+}
+
+.summaryText {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.summaryValue {
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
+}
+
+/* Collapsed latest reading: number plus its provenance labels, wrapping on narrow phones. */
+.summaryReading {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  vertical-align: middle;
+}
+
+.chevron {
+  flex: none;
+}
+
+.details[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.detailsBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  border-block-start: 1px solid var(--color-line-subtle);
+}
+
+/* ---------- Latest reading (inside a disclosure) ---------- */
+
+.latestTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.readingBadges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+/* Unscored pulse kept beside the scored reading, separated by a hairline. */
+.pulseRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--color-line-subtle);
+}

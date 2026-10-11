@@ -1,0 +1,136 @@
+/* The wrapper scrolls horizontally on narrow screens, never the page. */
+.scroller {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroller:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: calc(var(--focus-width) * -1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  color: var(--color-ink);
+}
+
+.caption {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  text-align: start;
+  color: var(--color-ink-3);
+  caption-side: top;
+}
+
+.th {
+  position: relative;
+  padding: var(--space-2-5) var(--space-4);
+  background: var(--color-surface-muted);
+  border-block-end: 1px solid var(--color-line);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  text-align: start;
+  vertical-align: bottom;
+  color: var(--color-ink-3);
+  white-space: nowrap;
+}
+
+.td {
+  padding: var(--space-3) var(--space-4);
+  border-block-end: 1px solid var(--color-line-subtle);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.row:last-child .td {
+  border-block-end: 0;
+}
+
+.dense .th {
+  padding-block: var(--space-2);
+}
+
+.dense .td {
+  padding-block: var(--space-2);
+}
+
+/* Logical first/last cell padding: tighter gutters on small screens. */
+@media (max-width: 640px) {
+  .th,
+  .td {
+    padding-inline: var(--space-3);
+  }
+}
+
+.alignEnd {
+  text-align: end;
+}
+
+.alignCenter {
+  text-align: center;
+}
+
+.numeric {
+  font-variant-numeric: lining-nums tabular-nums;
+  white-space: nowrap;
+}
+
+/* Clickable rows */
+.clickable {
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.clickable:hover {
+  background: var(--color-accent-wash);
+}
+
+.clickable:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: calc(var(--focus-width) * -1);
+  background: var(--color-accent-wash);
+}
+
+/* Row outlines are not painted by every engine: echo focus on the cells. */
+.clickable:focus-visible > .td {
+  border-block-end-color: var(--color-focus);
+}
+
+.clickable:active > .td {
+  background: var(--color-accent-soft);
+}
+
+/* Priority rows: edge mark on the first cell (logical side, flips in RTL). */
+.rowPriorityOrange > .td:first-child {
+  box-shadow: inset 3px 0 0 var(--color-status-orange-mark);
+}
+
+.rowPriorityRed > .td:first-child {
+  box-shadow: inset 3px 0 0 var(--color-status-red-mark);
+}
+
+:global([dir="rtl"]) .rowPriorityOrange > .td:first-child {
+  box-shadow: inset -3px 0 0 var(--color-status-orange-mark);
+}
+
+:global([dir="rtl"]) .rowPriorityRed > .td:first-child {
+  box-shadow: inset -3px 0 0 var(--color-status-red-mark);
+}
+
+.emptyCell {
+  padding: 0;
+}
+
+.emptyDefault {
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  color: var(--color-ink-3);
+}

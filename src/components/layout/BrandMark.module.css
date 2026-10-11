@@ -1,0 +1,72 @@
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.glyph {
+  flex: none;
+  width: 32px;
+  height: 32px;
+}
+
+.light .tile {
+  fill: var(--color-accent);
+}
+
+.light .trace {
+  stroke: var(--color-accent-ink);
+}
+
+.dark .tile {
+  fill: var(--color-rail-ink);
+}
+
+.dark .trace {
+  stroke: var(--color-rail);
+}
+
+.words {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: var(--leading-tight);
+}
+
+.name {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold, 700);
+  letter-spacing: 0;
+}
+
+.light .name {
+  color: var(--color-ink);
+}
+
+.dark .name {
+  color: var(--color-rail-ink);
+}
+
+.subtitle {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium, 500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 900px) {
+  .collapsible {
+    display: none;
+  }
+}
+
+.light .subtitle {
+  color: var(--color-ink-3);
+}
+
+.dark .subtitle {
+  color: var(--color-rail-ink-2);
+}

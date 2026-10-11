@@ -1,0 +1,146 @@
+.button {
+  --btn-h: var(--control-h-md);
+  --btn-px: var(--space-4);
+  --btn-gap: var(--space-2);
+  --btn-font: var(--text-base);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--btn-gap);
+  min-height: var(--btn-h);
+  max-width: 100%;
+  padding-block: 0;
+  padding-inline: var(--btn-px);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--btn-font);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: 0;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.button:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+.button:active:not(:disabled, [aria-disabled="true"]) {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.button:disabled,
+.button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.48;
+  box-shadow: none;
+}
+
+.button[aria-busy="true"] {
+  cursor: progress;
+  opacity: 0.85;
+}
+
+/* Sizes — md and lg meet the 44px touch target. */
+.sm {
+  --btn-h: var(--control-h-sm);
+  --btn-px: var(--space-3);
+  --btn-gap: var(--space-1-5);
+  --btn-font: var(--text-sm);
+  border-radius: var(--radius-sm);
+}
+
+.md {
+  --btn-h: var(--control-h-md);
+}
+
+.lg {
+  --btn-h: var(--control-h-lg);
+  --btn-px: var(--space-6);
+  --btn-font: var(--text-md);
+}
+
+.fullWidth {
+  display: flex;
+  width: 100%;
+}
+
+/* Variants */
+.primary {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-ink);
+  box-shadow: var(--shadow-button);
+}
+
+/* Hover rules restate `color` so global `a:hover` never recolours LinkButtons. */
+.primary:hover:not(:disabled, [aria-disabled="true"]) {
+  background: var(--color-accent-strong);
+  color: var(--color-accent-ink);
+}
+
+.secondary {
+  background: var(--color-surface-raised);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  box-shadow: none;
+}
+
+.secondary:hover:not(:disabled, [aria-disabled="true"]) {
+  background: var(--color-accent-wash);
+  border-color: var(--color-accent-strong);
+  color: var(--color-accent-strong);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--color-ink-2);
+}
+
+.ghost:hover:not(:disabled, [aria-disabled="true"]) {
+  background: var(--color-hover);
+  color: var(--color-ink);
+}
+
+.ghost:active:not(:disabled, [aria-disabled="true"]) {
+  background: var(--color-press);
+}
+
+/* Destructive confirm only. */
+.danger {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+  color: var(--color-ink-inverse);
+  box-shadow: 0 3px 0 var(--color-danger-strong);
+}
+
+.danger:hover:not(:disabled, [aria-disabled="true"]) {
+  background: var(--color-danger-strong);
+  border-color: var(--color-danger-strong);
+  color: var(--color-ink-inverse);
+}
+
+.label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.icon {
+  flex: none;
+}

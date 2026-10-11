@@ -1,0 +1,379 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  width: 100%;
+  min-width: 0;
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Queue section */
+
+.queue {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.queueHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.queueTitle {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  color: var(--color-ink);
+}
+
+/* Search + quick filters */
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.search {
+  width: 100%;
+  max-width: 28rem;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.filter {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  max-width: 100%;
+  padding-block: var(--space-1);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  font-variant-numeric: tabular-nums;
+  text-align: start;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.filter:hover {
+  border-color: var(--color-ink-3);
+  background: var(--color-hover);
+}
+
+.filter:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+.filter[aria-pressed="true"] {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+.filter[aria-pressed="true"]:hover {
+  border-color: var(--color-accent-strong);
+  background: var(--color-accent-strong);
+}
+
+.filterMark {
+  flex: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-status-unknown-line);
+}
+
+.filter[data-tone="red"] .filterMark {
+  background: var(--color-status-red-mark);
+}
+
+.filter[data-tone="orange"] .filterMark {
+  background: var(--color-status-orange-mark);
+}
+
+.filter[aria-pressed="true"] .filterMark {
+  box-shadow: 0 0 0 2px var(--color-surface);
+}
+
+.resultCount {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-ink-3);
+}
+
+.footnote {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-3);
+}
+
+/* Queue table: Patient, Urgence, Score */
+
+.tableCard {
+  min-width: 0;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--text-base);
+  line-height: var(--leading-snug);
+  color: var(--color-ink);
+}
+
+.th {
+  padding: var(--space-2-5) var(--space-4);
+  border-block-end: 1px solid var(--color-line);
+  background: var(--color-surface-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  text-align: start;
+  white-space: nowrap;
+  color: var(--color-ink-2);
+}
+
+.colUrgency {
+  width: 40%;
+}
+
+.colScore {
+  width: 7.5rem;
+  text-align: end;
+}
+
+.td {
+  height: var(--touch-min);
+  padding: var(--space-3) var(--space-4);
+  border-block-end: 1px solid var(--color-line-subtle);
+  text-align: start;
+  vertical-align: middle;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+/* Displayed-priority edge on the inline-start side (flips in RTL); the badge text carries the meaning. */
+.row {
+  --row-edge: transparent;
+  cursor: pointer;
+}
+
+.row[data-priority="red"] {
+  --row-edge: var(--color-status-red-mark);
+}
+
+.row[data-priority="orange"] {
+  --row-edge: var(--color-status-orange-mark);
+}
+
+.row[data-priority="unknown"] {
+  --row-edge: var(--color-status-unknown-line);
+}
+
+.row > .td:first-child {
+  border-inline-start: 4px solid var(--row-edge);
+}
+
+.row:last-child > .td {
+  border-block-end: 0;
+}
+
+.row:hover > .td,
+.row:focus-within > .td {
+  background: var(--color-accent-wash);
+}
+
+.patientCell {
+  min-width: 0;
+}
+
+/* One link (one tab stop) with a 44px-tall tap target; long names still wrap. */
+.patientLink {
+  display: inline-block;
+  min-height: var(--touch-min);
+  max-width: 100%;
+  /* 1.5 line-height + 2 × 0.625rem = 44px for a one-line name. */
+  padding-block: 0.625rem;
+  line-height: 1.5;
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  overflow-wrap: anywhere;
+}
+
+.patientLink:hover {
+  color: var(--color-accent-strong);
+  text-decoration-thickness: 2px;
+}
+
+.patientLink:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+  border-radius: var(--radius-xs);
+}
+
+.indicators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  margin-block-start: var(--space-1);
+}
+
+.indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-ink-2);
+}
+
+/* Long status labels (e.g. the qualified green) wrap instead of being cut. */
+.urgencyCell [data-status] {
+  padding-block: var(--space-0-5);
+  white-space: normal;
+}
+
+.scoreCell {
+  text-align: end;
+}
+
+.scoreValue {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+  line-height: var(--leading-tight);
+}
+
+.scoreValue .score {
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.scoreNote {
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-3);
+  white-space: nowrap;
+}
+
+.score {
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink-3);
+}
+
+.cellLabel {
+  display: none;
+}
+
+/* Phones: each row stacks (name, then urgency and score) so nothing scrolls sideways. */
+@media (max-width: 519.98px) {
+  .table,
+  .table > tbody {
+    display: block;
+  }
+
+  .thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    min-height: var(--touch-min);
+    padding: var(--space-3);
+    border-inline-start: 4px solid var(--row-edge);
+    border-block-end: 1px solid var(--color-line-subtle);
+  }
+
+  .row:last-child {
+    border-block-end: 0;
+  }
+
+  .row > .td {
+    display: block;
+    height: auto;
+    padding: 0;
+    border: 0;
+  }
+
+  .row > .td:first-child {
+    grid-column: 1 / -1;
+    border-inline-start: 0;
+  }
+
+  .row:hover,
+  .row:focus-within {
+    background: var(--color-accent-wash);
+  }
+
+  .row:hover > .td,
+  .row:focus-within > .td {
+    background: transparent;
+  }
+
+  .row > .scoreCell {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-1);
+  }
+
+  .cellLabel {
+    display: inline;
+    font-size: var(--text-xs);
+    color: var(--color-ink-3);
+  }
+}

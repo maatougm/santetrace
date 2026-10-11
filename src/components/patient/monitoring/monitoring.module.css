@@ -1,0 +1,153 @@
+/*
+ * Suivi (feature 006): condition cards, coverage chips, reasons and the red
+ * episode banner. Tokens only; logical properties only.
+ * Dashed outlines mean "unknown / gap" and nothing else (DESIGN.md §4).
+ */
+
+/* ---------- Text ---------- */
+
+.lead {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+}
+
+.meta {
+  margin: 0;
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-3);
+}
+
+.subTitle {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-2);
+}
+
+.reasons {
+  margin: 0;
+  padding-inline-start: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-2);
+  overflow-wrap: anywhere;
+}
+
+.untranslated {
+  font-size: var(--text-2xs);
+  color: var(--color-ink-3);
+}
+
+/* ---------- Coverage chips ---------- */
+
+.coverage {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1-5);
+}
+
+.gap {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  border: 1px dashed var(--color-status-unknown-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-status-unknown-soft);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-status-unknown);
+}
+
+/* ---------- Condition cards ---------- */
+
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2-5);
+  padding: var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.cardUnknown {
+  border-style: dashed;
+  border-color: var(--color-status-unknown-line);
+}
+
+.cardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.sources {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-3);
+}
+
+/* ---------- Red episode ---------- */
+
+.redBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.redBody p {
+  margin: 0;
+  line-height: var(--leading-normal);
+}
+
+.redStrong {
+  font-weight: var(--weight-semibold);
+}
+
+.redMeta {
+  font-size: var(--text-sm);
+}

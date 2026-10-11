@@ -1,0 +1,206 @@
+.frame {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-5);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-1);
+  min-width: 0;
+}
+
+.frameHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
+}
+
+.frameTitle {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+
+.frameSubtitle {
+  margin: var(--space-0-5) 0 0;
+  font-size: var(--text-xs);
+  color: var(--color-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1-5) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-xs);
+  color: var(--color-ink-2);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.legendSvg {
+  flex: none;
+}
+
+.plot {
+  width: 100%;
+  min-width: 0;
+}
+
+.plot :global(.recharts-surface) {
+  overflow: visible;
+}
+
+.plot :global(.recharts-cartesian-axis-tick-value) {
+  font-variant-numeric: tabular-nums;
+}
+
+.footnote {
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  color: var(--color-ink-3);
+}
+
+.details {
+  border-top: 1px solid var(--color-line-subtle);
+  padding-top: var(--space-2);
+}
+
+.details > summary {
+  width: fit-content;
+  padding: var(--space-1) 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-accent-strong);
+  cursor: pointer;
+}
+
+.details > summary:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+  border-radius: var(--radius-xs);
+}
+
+.tableWrap {
+  margin-top: var(--space-2);
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.table th,
+.table td {
+  padding: var(--space-1-5) var(--space-3);
+  border-bottom: 1px solid var(--color-line-subtle);
+  text-align: start;
+  white-space: nowrap;
+}
+
+.table thead th {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-3);
+}
+
+.table a {
+  color: var(--color-accent-strong);
+}
+
+.num {
+  text-align: end !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.tooltip {
+  min-width: 12rem;
+  max-width: 18rem;
+  padding: var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-2);
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+}
+
+.tooltipHeading {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-3);
+}
+
+.tooltipRows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.tooltipRows li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tooltipRows strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.tooltipRows li span:last-child {
+  color: var(--color-ink-3);
+}
+
+.tooltipKey {
+  width: 12px;
+  height: 2px;
+  border-radius: 1px;
+  flex: none;
+}
+
+.tooltipMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-line-subtle);
+  font-size: var(--text-xs);
+  color: var(--color-ink-3);
+  overflow-wrap: anywhere;
+}
+
+.sourceDot {
+  cursor: pointer;
+  outline: none;
+}
+
+.sourceDot:focus-visible circle:last-child,
+.sourceDot:hover circle:last-child {
+  stroke: var(--color-focus);
+  stroke-width: 3;
+}
+
+@media (max-width: 519.98px) {
+  .frame {
+    padding: var(--space-4) var(--space-3);
+  }
+}

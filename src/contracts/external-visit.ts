@@ -1,0 +1,14 @@
+import type { CareRecord } from "./care";
+import type { CareAction, MedicalFact } from "./monitoring";
+export type VisitSelectionRef = { kind: "measurement" | "observation" | "patient_fact" | "document" | "approved_action"; id: string; revision: number };
+export type GuestSelection = Pick<CareRecord, "measurements" | "observations" | "documents"> & { medicalFacts: MedicalFact[]; actions: CareAction[] };
+export type ExternalVisitGrant = { id: string; patientId: string; selection: VisitSelectionRef[]; frozenProjection: GuestSelection; appendGuestNotes: true; state: "pending" | "active" | "revoked" | "expired"; tokenHash: string; redeemBy: string; createdAt: string; revision: number };
+export type ExternalVisitSession = { id: string; grantId: string; sessionHash: string; declaredName: string; organization: string; verification: "unverified"; openedAt: string; expiresAt: string; lastSeenAt: string; invalidatedAt: string | null };
+export type ExternalNote = { id: string; patientId: string; grantId: string; sessionId: string; declaredName: string; organization: string; verification: "external_unverified"; text: string; consultationDate: string | null; receivedAt: string; correctsNoteId: string | null };
+export type VisitSelectionInput = { selection: VisitSelectionRef[]; clientId: string };
+export type VisitIssueResult = { grant: Omit<ExternalVisitGrant, "tokenHash" | "frozenProjection">; url: string | null };
+export type VisitRedeemInput = { token: string; declaredName: string; organization: string };
+export type GuestVisit = { id: string; grantId: string; declaredName: string; organization: string; verification: "unverified"; openedAt: string; expiresAt: string; idleExpiresAt: string };
+export type VisitSessionResult = { visit: GuestVisit; sessionToken: string };
+export type GuestRecord = { visit: GuestVisit; selection: GuestSelection; notes: ExternalNote[] };
+export type GuestNoteInput = { text: string; consultationDate: string | null; correctsNoteId: string | null; clientId: string };

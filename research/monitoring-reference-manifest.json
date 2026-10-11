@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "monitoring-reference-v1",
+  "retrievalPolicyVersion": "demo-cosine-v1",
+  "minimumCosineSimilarity": 0.35,
+  "references": [
+    {
+      "id": "hackcure-prototype-monitoring",
+      "revision": 1,
+      "issuer": "HackCure prototype team",
+      "title": "Supervised fictional monitoring and retrieval policy",
+      "date": "2026-10-11",
+      "url": null,
+      "sourceFile": "research/monitoring-prototype-policy.md",
+      "demoLabel": "Internal prototype policy; not a medical practice guideline",
+      "reuse": "Project-authored content only",
+      "sha256": "192529054e7ef9dd3e144d722545fe12afc9960f7e01cdbf810b8fe1b04a208e"
+    }
+  ]
+}

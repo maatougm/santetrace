@@ -1,0 +1,15 @@
+.timestamp {
+  font-variant-numeric: tabular-nums;
+}
+
+.timestamp time {
+  white-space: nowrap;
+}
+
+.label {
+  color: inherit;
+}
+
+.missing {
+  color: var(--color-ink-3);
+}

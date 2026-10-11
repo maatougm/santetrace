@@ -1,0 +1,116 @@
+/* Shared by EmptyState and ErrorState. */
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-10) var(--space-6);
+  text-align: center;
+  color: var(--color-ink-2);
+}
+
+.emblem {
+  display: inline-grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-block-end: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-sunken);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink-3);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-ink);
+  text-wrap: balance;
+}
+
+.description {
+  margin: 0;
+  max-width: 46ch;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-3);
+  text-wrap: pretty;
+}
+
+.action {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-block-start: var(--space-2);
+}
+
+.code {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-ink-3);
+}
+
+.code code {
+  padding: 0.0625rem var(--space-1-5);
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-sunken);
+  border: 1px solid var(--color-line);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-ink-2);
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Compact: one row, inline-start aligned, for inside cards and table cells. */
+.compact {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  text-align: start;
+}
+
+.compact .emblem {
+  width: 2.25rem;
+  height: 2.25rem;
+  margin: 0;
+  flex: none;
+}
+
+.compactBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.compact .title {
+  font-size: var(--text-base);
+}
+
+.compact .description {
+  max-width: none;
+}
+
+.compact .action {
+  justify-content: flex-start;
+  margin-block-start: var(--space-2);
+}
+
+/* Error: framed so it reads as a failed state, not as "no data". */
+.error {
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.error .emblem {
+  background: var(--color-surface-muted);
+  border-color: var(--color-line-strong);
+  color: var(--color-ink-2);
+}

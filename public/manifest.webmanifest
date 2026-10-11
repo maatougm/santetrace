@@ -1,0 +1,29 @@
+{
+  "id": "/patient",
+  "name": "Santetrace — suivi patient (démonstration)",
+  "short_name": "Santetrace",
+  "description": "Suivi de la tension et de la glycémie entre deux consultations. Démonstration fictive, seuils non validés cliniquement.",
+  "lang": "fr",
+  "dir": "auto",
+  "start_url": "/patient",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f0f4f5",
+  "theme_color": "#005eb8",
+  "categories": ["health", "medical"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

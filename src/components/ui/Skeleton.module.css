@@ -1,0 +1,36 @@
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.bar {
+  display: block;
+  max-width: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-sunken) 0%,
+    var(--color-surface-muted) 50%,
+    var(--color-bg-sunken) 100%
+  );
+  background-size: 200% 100%;
+  animation: sheen 1.6s var(--ease-in-out) infinite;
+}
+
+@keyframes sheen {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    animation: none;
+    background: var(--color-bg-sunken);
+  }
+}

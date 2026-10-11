@@ -1,0 +1,147 @@
+/*
+ * Shared text-control look for TextInput, Select and TextArea.
+ * Font size is 1rem so iOS Safari never zooms on focus.
+ */
+.box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--control-h-md);
+  background: var(--color-surface-raised);
+  border: 2px solid var(--color-line-control);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-inset);
+  color: var(--color-ink);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.box:hover {
+  border-color: var(--color-ink);
+}
+
+.box:focus-within {
+  border-color: var(--color-ink);
+}
+
+.box:has(:focus-visible) {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+  box-shadow: 0 0 0 var(--focus-offset) var(--color-focus-halo);
+}
+
+/* The box draws the ring; the borderless inner control must not draw a second one. */
+.control:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.box:has(:disabled) {
+  background: var(--color-surface-muted);
+  border-color: var(--color-line);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.box:has([aria-invalid="true"]) {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 1px var(--color-error);
+}
+
+/* Inner native control: borderless, inherits the box. */
+.control {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  min-height: calc(var(--control-h-md) - 4px);
+  margin: 0;
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
+  outline: none;
+  font-family: var(--font-sans);
+  /* Never below 16px: iOS Safari zooms on focus otherwise. */
+  font-size: max(1rem, var(--text-md));
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-snug);
+  color: inherit;
+  text-align: start;
+  font-variant-numeric: tabular-nums;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.control::placeholder {
+  color: var(--color-ink-4);
+  opacity: 1;
+}
+
+.control:disabled {
+  color: var(--color-ink-3);
+  cursor: not-allowed;
+  -webkit-text-fill-color: var(--color-ink-3);
+}
+
+.control[type="number"]::-webkit-inner-spin-button,
+.control[type="number"]::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.control[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Fixed unit inside the end of the input (e.g. "mmHg"). */
+.suffix {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  align-self: stretch;
+  padding-inline: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-ink-3);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+.withSuffix .control {
+  padding-inline-end: 0;
+}
+
+/* Select */
+.select {
+  padding-inline-end: calc(var(--space-3) + 1.5rem);
+  cursor: pointer;
+  text-overflow: ellipsis;
+}
+
+.selectIcon {
+  position: absolute;
+  inset-inline-end: var(--space-3);
+  top: 50%;
+  translate: 0 -50%;
+  color: var(--color-ink-3);
+  pointer-events: none;
+}
+
+/* TextArea */
+.areaBox {
+  align-items: stretch;
+}
+
+.textarea {
+  min-height: 6.5rem;
+  padding-block: var(--space-3);
+  line-height: var(--leading-normal);
+  resize: vertical;
+  font-variant-numeric: normal;
+}

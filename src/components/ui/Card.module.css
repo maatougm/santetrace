@@ -1,0 +1,128 @@
+.card {
+  --card-pad: var(--space-5);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+  color: var(--color-ink);
+}
+
+.padNone {
+  --card-pad: 0px;
+}
+
+.padSm {
+  --card-pad: var(--space-3);
+}
+
+.padMd {
+  --card-pad: var(--space-5);
+}
+
+.padLg {
+  --card-pad: var(--space-8);
+}
+
+@media (max-width: 480px) {
+  .padMd {
+    --card-pad: var(--space-4);
+  }
+
+  .padLg {
+    --card-pad: var(--space-5);
+  }
+}
+
+.muted {
+  background: var(--color-surface-muted);
+  box-shadow: none;
+}
+
+/* Priority edge: only for alert cards. Logical side, so it flips in RTL. */
+.priorityOrange,
+.priorityRed {
+  border-inline-start-width: 4px;
+}
+
+.priorityOrange {
+  border-inline-start-color: var(--color-status-orange-mark);
+}
+
+.priorityRed {
+  border-inline-start-color: var(--color-status-red-mark);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--card-pad);
+  padding-block-end: 0;
+}
+
+.padNone .header {
+  padding: var(--space-4) var(--space-5) var(--space-3);
+  border-block-end: 1px solid var(--color-line-subtle);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  flex: 1 1 16rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-eyebrow);
+  line-height: var(--leading-snug);
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-ink);
+}
+
+.description {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-3);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-inline-start: auto;
+}
+
+.body {
+  padding: var(--card-pad);
+  min-width: 0;
+}
+
+.header + .body {
+  padding-block-start: var(--space-4);
+}
+
+.padNone .header + .body {
+  padding-block-start: 0;
+}

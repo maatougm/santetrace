@@ -1,0 +1,10 @@
+export type Language = "fr" | "ar";
+export type DemoRules = { systolicWarn: number; diastolicWarn: number; systolicHigh: number; diastolicHigh: number; overdueHours: number };
+export type Patient = { id: string; displayName: string; region: string; age: number; language: Language; fictional: true; consent: boolean; telegramLinked: boolean; createdAt: string; rules: DemoRules };
+export type Reading = { id: string; patientId: string; systolic: number; diastolic: number; unit: "mmHg"; measuredAt: null; submittedAt: string; confirmedAt: string; source: "telegram" | "demo"; pendingId: string };
+export type Alert = { id: string; patientId: string; kind: "outside_demo_range" | "missing_measurement"; priority: "high" | "review"; status: "new" | "acknowledged" | "resolved"; readingId: string | null; reminderId: string | null; reason: string; createdAt: string; acknowledgedAt: string | null; resolvedAt: string | null; rulesSnapshot: DemoRules | null };
+export type Note = { id: string; patientId: string; alertId: string | null; kind: "follow_up" | "contact_attempt"; outcome: "contacted" | "no_answer" | "appointment_planned" | null; text: string; authorLabel: string; createdAt: string };
+export type Reminder = { id: string; patientId: string; dueAt: string; followUpAt: string; silenceAt: string; initialSentAt: string | null; followUpSentAt: string | null; satisfiedAt: string | null; silenceAlertAt: string | null; deliveryError: string | null; simulated: boolean };
+export type PendingSubmission = { id: string; patientId: string; systolic: number; diastolic: number; submittedAt: string; expiresAt: string; status: "pending" | "confirmed" | "cancelled"; source: "telegram" | "demo"; generation: string };
+export type Snapshot = { generation: string; serverTime: string; mode: "fictional_demo"; storage: "sqlite"; telegramConfigured: boolean; patients: Patient[]; readings: Reading[]; alerts: Alert[]; notes: Note[]; reminders: Reminder[]; pending: PendingSubmission[] };
+export type ApiError = { error: { code: string; message: string } };
